@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The 5 P's – Squeeze the Juice</title>
+<meta name="theme-color" content="#17131c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="5 P's">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root {
     --bg: #17131c; --card: #231d2b; --card2: #2c2536; --text: #f6f1ea; --muted: #a79fb3;
@@ -104,6 +112,16 @@
   #celeScene.tree svg { width: min(92vw, 560px); max-height: 60vh; }
   #muteCele { position: fixed; top: 12px; right: 12px; z-index: 60; background: transparent; border-color: #5a4d66; }
   [data-date] { cursor: pointer; }
+  #wild h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .wildcard { width: 100%; border: none; border-radius: 14px; padding: 20px 14px; font-size: 1.05rem; font-weight: 700; color: #1b1422; background: linear-gradient(110deg, #ffd23f 20%, #fff3b0 40%, #ff9f1c 60%, #ffd23f 80%); background-size: 250% 100%; animation: shimmer 3s linear infinite; }
+  .wildcard small { display: block; font-weight: 500; opacity: .75; margin-top: 4px; }
+  .wildface { border: 1px solid var(--c); border-radius: 14px; padding: 14px; background: linear-gradient(160deg, var(--card2), var(--card)); box-shadow: 0 0 22px -8px var(--c); animation: flip .7s cubic-bezier(.2,.8,.2,1) both; }
+  .wildface .wk { color: var(--c); font-weight: 700; letter-spacing: .04em; }
+  .wildface .wt { font-size: 1.15rem; margin: 6px 0 12px; font-family: Georgia, serif; }
+  .wildface button { background: var(--c); color: #111; border-color: transparent; font-weight: 700; }
+  .wildface .played { color: var(--c); font-weight: 700; }
+  @keyframes shimmer { to { background-position: -250% 0; } }
+  @keyframes flip { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } to { opacity: 1; transform: perspective(600px) rotateY(0); } }
   .todayring { transform-box: fill-box; transform-origin: 50% 50%; animation: pulse 1.8s ease-in-out infinite; }
   .trophies { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: center; color: var(--muted); font-size: .85rem; }
   .trophies button { border-color: #8a6a1f; color: #ffe066; }
@@ -159,6 +177,8 @@
       <button class="replay" id="replay" hidden>🎉 Replay the squeeze</button>
     </div>
   </section>
+
+  <section class="panel wide" id="wild"></section>
 
   <section class="grid" id="cards"></section>
 
@@ -229,8 +249,8 @@ let current = todayStr();
 let modeOverride = null; // 'done' | 'plan' | null (null = default for the date)
 
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) return s; } catch (e) {}
-  return { entries: [] };
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) { s.wild = s.wild || {}; return s; } } catch (e) {}
+  return { entries: [], wild: {} };
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -408,6 +428,47 @@ function orchardSvg(m, info, opts = {}) {
   return { svg, full, complete };
 }
 
+// ---------- Wild Card: a daily surprise aimed at the P you've neglected this week ----------
+const WILD = {
+  payday: ['Pitch your idea to someone in exactly 30 seconds', 'Ask for a referral or raise a price', 'Message someone you admire about working together', 'Spend 20 focused minutes on the one task that would move your income most', 'Sell something you no longer use'],
+  play: ['Do something silly in public (within reason)', 'Learn a party trick or a magic trick', 'Eat dessert first and enjoy every bite', 'Take a route you have never walked and explore', 'Invent a game using whatever is on your desk'],
+  pain: ['Hold a plank until you want to quit, then 10 seconds more', 'Go 2 hours with your phone out of reach', 'Ask for something you expect a no to', 'Write the email you have been dreading', 'End your shower with 60 seconds of cold'],
+  partnership: ['Learn a stranger’s name and one thing they love', 'Call, don’t text, someone you care about', 'Thank someone who helped you years ago', 'Give a genuine compliment to three people', 'Invite someone new to coffee or a walk'],
+  physical: ['Do 50 squats before lunch', 'Walk barefoot on grass or sand for 10 minutes', 'Hold a wall sit for 90 seconds', 'Do three sets of max pushups', 'Dance through one entire song'],
+};
+function hashStr(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+function renderWild(m) {
+  const el = document.getElementById('wild'), today = todayStr();
+  const played = Object.values(state.wild).filter(w => w.done).length;
+  const head = `<h2>🃏 Wild Card <small>· ${played} played</small></h2>`;
+  if (current !== today) {
+    el.innerHTML = head + `<div class="tag">A new Wild Card is waiting each day. Go to today to reveal it.</div>`;
+    return;
+  }
+  const w = state.wild[today];
+  if (!w || !w.revealed) {
+    el.innerHTML = head + `<button class="wildcard" data-wildreveal="1">✨ Tap to reveal today’s Wild Card ✨
+      <small>A surprise challenge aimed at the P you’ve neglected most this week</small></button>`;
+    return;
+  }
+  const p = PS.find(x => x.id === w.p);
+  el.innerHTML = head + `<div class="wildface" style="--c:${p.color}">
+    <div class="wk">${p.emoji} ${p.name.toUpperCase()} WILD CARD</div>
+    <div class="wt">${esc(w.text)}</div>
+    ${w.done ? '<div class="played">✓ Played. Nice work.</div>' : '<button data-wilddo="1">I did it!</button>'}
+  </div>`;
+}
+function revealWild() {
+  const today = todayStr(), m = hitsByDate();
+  const days = Array.from({ length: 7 }, (_, i) => fmt(addDays(parse(today), -i)));
+  const vals = PS.map(p => days.filter(d => m[d] && m[d].has(p.id)).length);
+  const min = Math.min(...vals), pool = PS.filter((_, i) => vals[i] === min);
+  const seed = hashStr(today), p = pool[seed % pool.length];
+  state.wild[today] = { revealed: true, p: p.id, text: WILD[p.id][(seed >> 3) % WILD[p.id].length], done: false };
+  save(); render();
+}
+
 // ---------- render ----------
 const $ = id => document.getElementById(id);
 const ideaIdx = {};
@@ -474,6 +535,7 @@ function render() {
   $('heatLegend').innerHTML = 'Less ' + ['var(--empty)', '#5a4a3a', '#8a5a2b', '#c27a1f', '#f09a14'].map(c => `<i style="background:${c}"></i>`).join('') + '<i style="background:linear-gradient(135deg,#ffe066,#ff9f1c)"></i> Fully squeezed';
   const r = radarSvg(m);
   $('radar').innerHTML = r.svg; $('radarNote').textContent = r.note;
+  renderWild(m);
   const info = monthInfo(current), o = orchardSvg(m, info);
   $('orchard').innerHTML = o.svg;
   $('orchardTitle').textContent = info.name;
@@ -720,6 +782,17 @@ document.addEventListener('click', ev => {
     input.value = IDEAS[id][ideaIdx[id] ?? 0]; input.focus(); return;
   }
   if (t.dataset.mode) { modeOverride = t.dataset.mode; render(); return; }
+  if (t.closest && t.closest('[data-wildreveal]')) { revealWild(); return; }
+  if (t.dataset.wilddo) {
+    const w = state.wild[todayStr()];
+    if (w && !w.done && current === todayStr()) {
+      const before = doneCount();
+      state.entries.push({ id: Date.now().toString(36) + 'w', date: current, p: w.p, text: '\ud83c\udccf ' + w.text, done: true, wild: true });
+      w.done = true; save(); render();
+      if (before < 5 && doneCount() === 5) celebrate(rewardOpts());
+    }
+    return;
+  }
   if (t.dataset.reward) { celebrate({ reward: t.dataset.reward, instant: true }); return; }
   const dd = t.closest && t.closest('[data-date]');
   if (dd) { goTo(dd.dataset.date); return; }
@@ -752,7 +825,7 @@ $('file').onchange = async e => {
   try {
     const data = JSON.parse(await f.text());
     if (!data || !Array.isArray(data.entries)) throw 0;
-    if (confirm(`Replace current data with ${data.entries.length} entries from this backup?`)) { state = { entries: data.entries }; save(); render(); }
+    if (confirm(`Replace current data with ${data.entries.length} entries from this backup?`)) { state = { entries: data.entries, wild: data.wild || {} }; save(); render(); }
   } catch (err) { alert('That file is not a valid 5 P\'s backup.'); }
   e.target.value = '';
 };
