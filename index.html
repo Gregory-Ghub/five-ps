@@ -112,6 +112,61 @@
   #celeScene.tree svg { width: min(92vw, 560px); max-height: 60vh; }
   #muteCele { position: fixed; top: 12px; right: 12px; z-index: 60; background: transparent; border-color: #5a4d66; }
   [data-date] { cursor: pointer; }
+  details.fold > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; font-size: 1.05rem; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  details.fold > summary::after { content: '\25be'; color: var(--orange); font-size: 1.3rem; transition: transform .2s; }
+  details.fold[open] > summary::after { transform: rotate(180deg); }
+  details.fold > summary .foldhint { margin-left: auto; font-weight: 400; font-size: .85rem; color: var(--muted); }
+  details.fold[open] > summary { margin-bottom: 12px; }
+  .banner { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-top: 14px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(120deg, #1d2b4a, #231d2b); animation: fadeup .6s ease both; }
+  .banner.warn { background: linear-gradient(120deg, #4a2f1d, #231d2b); }
+  .banner button { background: none; border: none; color: var(--muted); padding: 0 4px; }
+  input[type=date], textarea.rvtext { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; color-scheme: dark; }
+  textarea.rvtext { width: 100%; min-height: 64px; resize: vertical; }
+  .rvrow { display: flex; align-items: center; gap: 10px; margin: 5px 0; font-size: .9rem; }
+  .rvrow .lab { width: 110px; flex: none; }
+  .bar { flex: 1; height: 9px; background: var(--empty); border-radius: 6px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--c, var(--orange)); border-radius: 6px; }
+  .rvhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .rvbig { font-size: 1.6rem; font-weight: 800; color: var(--orange); }
+  .rvgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rvbox { background: var(--card2); border-radius: 12px; padding: 12px; }
+  .rvbox h4 { margin: 0 0 8px; font-size: .95rem; }
+  .kept button.active { background: var(--orange); color: #111; border-color: transparent; font-weight: 700; }
+  @media (max-width: 720px) { .rvgrid { grid-template-columns: 1fr; } }
+  .tabs { display: flex; gap: 4px; margin: 14px 0 0; border-bottom: 1px solid var(--line); }
+  .tabs button { border: none; background: none; border-bottom: 3px solid transparent; border-radius: 0; padding: 10px 18px; font-weight: 600; color: var(--muted); }
+  .tabs button.active { color: var(--orange); border-bottom-color: var(--orange); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chips button { padding: 4px 10px; border-radius: 999px; font-size: .85rem; }
+  .chips button.active { background: var(--orange); color: #111; border-color: transparent; font-weight: 700; }
+  .hcontrols { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .hsummary { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0 12px; font-size: .95rem; }
+  .hsummary b { color: var(--orange); font-size: 1.15rem; }
+  .hgroup { background: var(--card2); border-radius: 12px; padding: 10px 12px; margin-top: 10px; }
+  .hgroup h4 { margin: 0 0 6px; display: flex; justify-content: space-between; gap: 8px; font-size: .95rem; }
+  .hgroup h4 small { color: var(--muted); font-weight: 400; }
+  .hgroup h4.full { color: #ffe066; }
+  .hlist { list-style: none; margin: 0; padding: 0; }
+  .hitem { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-size: .92rem; flex-wrap: wrap; }
+  .hitem:first-child { border-top: none; }
+  .hitem .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); flex: none; }
+  .hitem .ht { flex: 1; min-width: 140px; }
+  .hitem .hs { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+  .hitem.missed .ht { color: #f0b36a; }
+  .hitem.pending .ht, .hitem.upcoming .ht { color: var(--muted); }
+  .hitem button { padding: 2px 8px; font-size: .8rem; }
+  .weekrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--line); }
+  .weekrow:first-child { border-top: none; }
+  .weekrow .wl { min-width: 130px; font-weight: 600; }
+  .pill { border-radius: 999px; padding: 2px 9px; font-size: .85rem; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); font-weight: 700; }
+  .oracle .orb { width: 86px; height: 86px; border-radius: 50%; margin: 6px auto 10px; background: radial-gradient(circle at 35% 30%, #fff 0%, #c9a7ff 25%, #6b3fd4 65%, #2a1458 100%); box-shadow: 0 0 28px #8a5cff88; animation: orb 3s ease-in-out infinite; }
+  .oracle .orb.think { animation: orbspin .8s ease-in-out; }
+  .oracle .out { min-height: 3.2em; text-align: center; font-family: Georgia, serif; font-size: 1.1rem; margin: 8px auto 12px; max-width: 560px; }
+  .oracle .out.show { animation: fadeup .8s ease both; }
+  .oracle .center { text-align: center; }
+  @keyframes orb { 0%,100% { transform: scale(1); box-shadow: 0 0 22px #8a5cff77; } 50% { transform: scale(1.06); box-shadow: 0 0 40px #8a5cffcc; } }
+  @keyframes orbspin { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.25); filter: hue-rotate(120deg); } 100% { transform: rotate(360deg) scale(1); } }
   #wild h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
   .wildcard { width: 100%; border: none; border-radius: 14px; padding: 20px 14px; font-size: 1.05rem; font-weight: 700; color: #1b1422; background: linear-gradient(110deg, #ffd23f 20%, #fff3b0 40%, #ff9f1c 60%, #ffd23f 80%); background-size: 250% 100%; animation: shimmer 3s linear infinite; }
   .wildcard small { display: block; font-weight: 500; opacity: .75; margin-top: 4px; }
@@ -149,11 +204,19 @@
     </div>
     <div class="stats">
       <div class="stat"><b id="streak">0</b><small>🔥 streak</small></div>
+      <div class="stat" title="Earn one for every 7-day streak (max 2). A shield protects your streak when you miss a day."><b id="shields">0</b><small>🛡️ shields</small></div>
       <div class="stat"><b id="best">0</b><small>🏆 best</small></div>
       <div class="stat"><b id="total">0</b><small>🧃 squeezed days</small></div>
     </div>
   </header>
 
+  <nav class="tabs" id="tabs">
+    <button data-tab="today">🍊 Today</button>
+    <button data-tab="progress">📈 Progress</button>
+  </nav>
+
+  <div id="tab-today">
+  <div class="banner" id="banner" hidden></div>
   <div class="datebar">
     <button id="prev" title="Previous day">◀</button>
     <div class="date" id="dateLabel"></div>
@@ -181,7 +244,9 @@
   <section class="panel wide" id="wild"></section>
 
   <section class="grid" id="cards"></section>
+  </div>
 
+  <div id="tab-progress" hidden>
   <section class="panels">
     <div class="panel">
       <h2>📅 Juice calendar <small>(last 26 weeks)</small></h2>
@@ -200,6 +265,37 @@
     <div id="orchard"></div>
     <div class="trophies" id="trophies"></div>
   </section>
+
+  <details class="panel wide fold" id="foldReview">
+    <summary><span>🗓️ Weekly review</span><span class="foldhint" id="hintReview"></span></summary>
+    <div id="review"></div>
+  </details>
+
+  <details class="panel wide fold" id="foldHistory">
+    <summary><span>📜 What you've accomplished</span><span class="foldhint" id="hintHistory"></span></summary>
+    <div class="hcontrols">
+      <div class="chips"><span class="tag">Range:</span>
+        <button data-hrange="7">7 days</button><button data-hrange="30">30 days</button><button data-hrange="month">This month</button><button data-hrange="all">All time</button><button data-hrange="custom">📅 Custom</button></div>
+      <div class="chips" id="hcustom" hidden><span class="tag">From</span><input type="date" id="hfrom"><span class="tag">to</span><input type="date" id="hto"><span class="tag">(same date = a single day)</span></div>
+      <div class="chips"><span class="tag">Show:</span>
+        <button data-hstatus="all">Everything</button><button data-hstatus="done">✔ Done</button><button data-hstatus="notdone">⏳ Planned, not done</button><button data-hstatus="upcoming">🗓 Upcoming</button></div>
+      <div class="chips"><span class="tag">View:</span>
+        <button data-hview="date">By date</button><button data-hview="p">By P</button><button data-hview="week">By week</button></div>
+    </div>
+    <div class="hsummary" id="hsummary"></div>
+    <div id="hbody"></div>
+    <div style="margin-top:12px"><button data-csv="1">⬇ Download this view as CSV</button></div>
+  </details>
+
+  <details class="panel wide oracle fold" id="foldOracle">
+    <summary><span>🔮 The Juice Oracle</span><span class="foldhint">a surprise from your own data</span></summary>
+    <div class="center">
+      <div class="orb" id="orb"></div>
+      <div class="out" id="oracleOut">Ask, and the oracle reads your history.</div>
+      <button data-oracle="1">Consult the oracle</button>
+    </div>
+  </details>
+  </div>
 
   <footer>
     <span>Data lives only in this browser.</span>
@@ -246,11 +342,15 @@ const isDone = e => e.done !== false; // older entries have no flag and count as
 
 let state = load();
 let current = todayStr();
+let tab = 'today';
+try { if (localStorage.getItem('fivePs.tab') === 'progress') tab = 'progress'; } catch (e) {}
+const hist = { range: '30', status: 'all', view: 'date', from: '', to: '' };
+let reviewOffset = 0; // weeks relative to this week
 let modeOverride = null; // 'done' | 'plan' | null (null = default for the date)
 
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) { s.wild = s.wild || {}; return s; } } catch (e) {}
-  return { entries: [], wild: {} };
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) { s.wild = s.wild || {}; s.reviews = s.reviews || {}; return s; } } catch (e) {}
+  return { entries: [], wild: {}, reviews: {} };
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
@@ -267,18 +367,28 @@ const countOn = (m, d) => (m[d] ? m[d].size : 0);
 const getMode = () => current > todayStr() ? 'plan' : (modeOverride || 'done');
 function goTo(date) { current = date; modeOverride = null; render(); }
 
-function stats(m) {
-  const full = Object.keys(m).filter(d => m[d].size === 5).sort();
-  let best = 0, run = 0, prev = null;
-  for (const d of full) {
-    run = prev && fmt(addDays(parse(prev), 1)) === d ? run + 1 : 1;
-    best = Math.max(best, run); prev = d;
+// Streak engine. Every 7 fully squeezed days in a row earns a shield (max 2).
+// A missed day spends a shield instead of resetting the streak ("never miss twice").
+function streakEngine(m) {
+  const today = todayStr();
+  const dates = Object.keys(m).filter(d => d <= today).sort();
+  const res = { streak: 0, best: 0, total: 0, shields: 0, shielded: new Set(), yesterdayStatus: null };
+  if (!dates.length) return res;
+  let streak = 0, shields = 0;
+  for (let d = parse(dates[0]); fmt(d) <= today; d = addDays(d, 1)) {
+    const ds = fmt(d), full = countOn(m, ds) === 5;
+    if (full) {
+      streak++; res.total++; res.best = Math.max(res.best, streak);
+      if (streak % 7 === 0 && shields < 2) shields++;
+    } else if (ds !== today) {
+      if (streak > 0 && shields > 0) { shields--; res.shielded.add(ds); }
+      else streak = 0;
+    }
   }
-  let streak = 0, d = parse(todayStr());
-  if (countOn(m, fmt(d)) < 5) d = addDays(d, -1); // today may still be in progress
-  while (countOn(m, fmt(d)) === 5) { streak++; d = addDays(d, -1); }
-  return { streak, best, total: full.length };
+  res.streak = streak; res.shields = shields;
+  return res;
 }
+function stats(m) { const e = streakEngine(m); return { streak: e.streak, best: e.best, total: e.total, shields: e.shields }; }
 
 // ---------- SVG builders ----------
 function orangeSvg(done, planned) {
@@ -317,6 +427,7 @@ function glassSvg(done) {
   </svg>`;
 }
 function heatSvg(m) {
+  const shielded = streakEngine(m).shielded;
   const weeks = 26, cell = 14, gap = 3;
   const today = parse(todayStr());
   const first = addDays(today, -today.getDay() - (weeks - 1) * 7); // Sunday of first week
@@ -326,9 +437,10 @@ function heatSvg(m) {
     const d = addDays(first, w * 7 + dow);
     if (d > today) continue;
     const s = fmt(d), n = countOn(m, s);
-    const fill = n === 5 ? 'url(#gold)' : shades[n];
+    const isShield = n < 5 && shielded.has(s);
+    const fill = n === 5 ? 'url(#gold)' : isShield ? '#2f5fb3' : shades[n];
     const sel = s === current ? ' stroke="#fff" stroke-width="2"' : '';
-    out += `<rect data-date="${s}" x="${w * (cell + gap)}" y="${dow * (cell + gap)}" width="${cell}" height="${cell}" rx="3" fill="${fill}"${sel}><title>${s}: ${n}/5</title></rect>`;
+    out += `<rect data-date="${s}" x="${w * (cell + gap)}" y="${dow * (cell + gap)}" width="${cell}" height="${cell}" rx="3" fill="${fill}"${sel}><title>${s}: ${n}/5${isShield ? ' \ud83d\udee1\ufe0f shield used' : ''}</title></rect>`;
   }
   const W = weeks * (cell + gap), H = 7 * (cell + gap);
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -469,11 +581,276 @@ function revealWild() {
   save(); render();
 }
 
+// ---------- Progress: history views ----------
+const STATUS = {
+  done:     { icon: '✔', label: 'Done' },
+  missed:   { icon: '⏳', label: 'Planned, not done' },
+  pending:  { icon: '◔', label: 'Planned for today' },
+  upcoming: { icon: '📅', label: 'Upcoming' },
+};
+function statusOf(e, today) {
+  if (isDone(e)) return 'done';
+  return e.date < today ? 'missed' : e.date === today ? 'pending' : 'upcoming';
+}
+// inclusive date bounds for the chosen range. Presets end today; a custom range can reach into the future.
+function rangeBounds() {
+  const today = todayStr(), t = parse(today);
+  if (hist.range === '7') return { start: fmt(addDays(t, -6)), end: today };
+  if (hist.range === '30') return { start: fmt(addDays(t, -29)), end: today };
+  if (hist.range === 'month') return { start: fmt(new Date(t.getFullYear(), t.getMonth(), 1)), end: today };
+  if (hist.range === 'custom') {
+    let a = hist.from || null, b = hist.to || null;
+    if (a && b && a > b) [a, b] = [b, a];
+    return { start: a, end: b };
+  }
+  return { start: null, end: today };
+}
+function inBounds(e, b) { return (!b.start || e.date >= b.start) && (!b.end || e.date <= b.end); }
+function windowEntries() { return state.entries.filter(e => inBounds(e, rangeBounds())); }
+function histEntries() {
+  const today = todayStr(), b = rangeBounds();
+  let list;
+  if (hist.range === 'custom') list = state.entries.filter(e => inBounds(e, b));
+  else if (hist.status === 'upcoming') list = state.entries.filter(e => e.date > today);
+  else {
+    list = windowEntries();
+    if (hist.status === 'all' && hist.range === 'all') list = list.concat(state.entries.filter(e => e.date > today));
+  }
+  if (hist.status === 'done') list = list.filter(isDone);
+  else if (hist.status === 'notdone') list = list.filter(e => !isDone(e) && e.date <= today);
+  else if (hist.status === 'upcoming') list = list.filter(e => !isDone(e) && e.date > today);
+  return list.slice().sort((a, b2) => a.date < b2.date ? 1 : a.date > b2.date ? -1 : 0);
+}
+const dayLabel = ds => parse(ds).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+
+function itemHtml(e, today, showDate) {
+  const p = PS.find(x => x.id === e.p), st = statusOf(e, today), meta = STATUS[st];
+  const acts = (st === 'missed' || st === 'pending' ? `<button data-hdone="${e.id}">✔ Done</button>` : '')
+             + (st === 'missed' ? `<button data-hmove="${e.id}">→ Today</button>` : '');
+  return `<li class="hitem ${st}" style="--c:${p.color}"><span class="dot"></span>
+    <span class="ht">${p.emoji} ${esc(e.text)}</span>
+    <span class="hs">${showDate ? esc(dayLabel(e.date)) + ' · ' : ''}${meta.icon} ${meta.label}</span>${acts}</li>`;
+}
+
+function renderHistory() {
+  const today = todayStr(), m = hitsByDate();
+  document.querySelectorAll('[data-hrange]').forEach(b => b.classList.toggle('active', b.dataset.hrange === hist.range));
+  document.querySelectorAll('[data-hstatus]').forEach(b => b.classList.toggle('active', b.dataset.hstatus === hist.status));
+  document.querySelectorAll('[data-hview]').forEach(b => b.classList.toggle('active', b.dataset.hview === hist.view));
+
+  // customs: show the date pickers and make sure they hold sensible values
+  if (hist.range === 'custom' && !hist.from && !hist.to) { hist.from = fmt(addDays(parse(today), -6)); hist.to = today; }
+  $('hcustom').hidden = hist.range !== 'custom';
+  $('hfrom').value = hist.from; $('hto').value = hist.to;
+
+  // summary for the chosen range, independent of the status filter
+  const bnd = rangeBounds(), win = windowEntries();
+  const done = win.filter(isDone).length;
+  const notDone = win.filter(e => !isDone(e) && e.date <= today).length;
+  const planned = win.filter(e => (e.planned || e.done === false) && e.date <= today), plannedDone = planned.filter(isDone).length;
+  const rate = planned.length ? Math.round(plannedDone / planned.length * 100) : null;
+  const fullDays = Object.keys(m).filter(d => m[d].size === 5 && inBounds({ date: d }, bnd)).length;
+  const upcoming = hist.range === 'custom' ? win.filter(e => e.date > today).length : state.entries.filter(e => e.date > today).length;
+  const rangeText = hist.range === 'custom' && bnd.start && bnd.end
+    ? (bnd.start === bnd.end ? esc(dayLabel(bnd.start)) : `${esc(dayLabel(bnd.start))} \u2013 ${esc(dayLabel(bnd.end))}`) : '';
+  $('hsummary').innerHTML = (rangeText ? `<span class="tag">${rangeText}</span>` : '') + `<span><b>${done}</b> done</span><span><b>${notDone}</b> planned, not done</span>
+    <span><b>${fullDays}</b> fully squeezed day${fullDays === 1 ? '' : 's'}</span>
+    ${rate === null ? '' : `<span><b>${rate}%</b> of plans completed</span>`}
+    <span><b>${upcoming}</b> upcoming</span>`;
+
+  const list = histEntries();
+  let html = '';
+  if (!list.length) {
+    html = `<div class="tag">Nothing here for this filter yet. Log some wins, or change the range above.</div>`;
+  } else if (hist.view === 'date') {
+    const groups = {};
+    list.forEach(e => (groups[e.date] ||= []).push(e));
+    html = Object.keys(groups).sort().reverse().map(d => {
+      const dn = (m[d] ? m[d].size : 0), isFull = dn === 5;
+      return `<div class="hgroup"><h4 class="${isFull ? 'full' : ''}" data-date="${d}"><span>${isFull ? '🧃 ' : ''}${esc(dayLabel(d))}${d === today ? ' · today' : ''}</span><small>${dn}/5 P’s</small></h4>
+        <ul class="hlist">${groups[d].map(e => itemHtml(e, today, false)).join('')}</ul></div>`;
+    }).join('');
+  } else if (hist.view === 'p') {
+    html = PS.map(p => {
+      const items = list.filter(e => e.p === p.id);
+      if (!items.length) return '';
+      const d = items.filter(isDone).length, shown = items.slice(0, 25);
+      return `<div class="hgroup" style="border-left:4px solid ${p.color}"><h4 style="color:${p.color}"><span>${p.emoji} ${p.name}</span><small>${d} done · ${items.length - d} not done</small></h4>
+        <ul class="hlist">${shown.map(e => itemHtml(e, today, true)).join('')}</ul>
+        ${items.length > 25 ? `<div class="tag">…and ${items.length - 25} more (narrow the range to see them)</div>` : ''}</div>`;
+    }).join('');
+  } else {
+    const weeks = {};
+    list.forEach(e => {
+      const d = parse(e.date), ws = fmt(addDays(d, -d.getDay()));
+      const w = (weeks[ws] ||= { counts: Object.fromEntries(PS.map(p => [p.id, 0])), notDone: 0, days: new Set() });
+      if (isDone(e)) { w.counts[e.p]++; } else if (e.date > today) w.upcoming = (w.upcoming || 0) + 1; else w.notDone++;
+    });
+    html = '<div class="hgroup">' + Object.keys(weeks).sort().reverse().map(ws => {
+      const w = weeks[ws], end = fmt(addDays(parse(ws), 6));
+      const full = Object.keys(m).filter(d => d >= ws && d <= end && m[d].size === 5).length;
+      return `<div class="weekrow"><span class="wl">${esc(dayLabel(ws))} – ${esc(dayLabel(end))}</span>
+        ${PS.map(p => `<span class="pill" style="--c:${p.color}">${p.emoji} ${w.counts[p.id]}</span>`).join('')}
+        <span class="hs">${full ? '🧃 ' + full + ' full' : ''}${w.notDone ? (full ? ' · ' : '') + '⏳ ' + w.notDone + ' not done' : ''}${w.upcoming ? ((full || w.notDone) ? ' · ' : '') + '📅 ' + w.upcoming + ' upcoming' : ''}</span></div>`;
+    }).join('') + '</div>';
+  }
+  $('hbody').innerHTML = html;
+}
+
+function downloadCsv() {
+  const today = todayStr();
+  const q = v => `"${String(v).replace(/"/g, '""')}"`;
+  const rows = [['date', 'p', 'task', 'status']].concat(histEntries().slice().reverse().map(e =>
+    [e.date, PS.find(p => p.id === e.p).name, e.text, STATUS[statusOf(e, today)].label]));
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([rows.map(r => r.map(q).join(',')).join('\n')], { type: 'text/csv' }));
+  a.download = `five-ps-${hist.range === 'custom' ? (hist.from + '_to_' + hist.to) : hist.range}-${today}.csv`; a.click();
+}
+
+// ---------- Juice Oracle: a random fact about you, drawn from your own data ----------
+const STOP = new Set('the and for with from that this have your about into then they them what when will would could should just some more very much over also been were their there than like want need get got doing done make made'.split(' '));
+let lastOracle = -1;
+function oracleDeck() {
+  const done = state.entries.filter(isDone), today = todayStr(), m = hitsByDate();
+  if (!done.length) return ['The orb is cloudy. Log a few wins and come back, and I will have secrets to tell. 🔮'];
+  const deck = [];
+  const byP = Object.fromEntries(PS.map(p => [p.id, 0])); done.forEach(e => byP[e.p]++);
+  const ranked = [...PS].sort((a, b) => byP[b.id] - byP[a.id]);
+  const top = ranked[0], low = ranked[ranked.length - 1];
+  deck.push(`${top.emoji} ${top.name} is your signature flavor: ${byP[top.id]} of your ${done.length} wins (${Math.round(byP[top.id] / done.length * 100)}%).`);
+  if (byP[low.id] < byP[top.id]) deck.push(`${low.emoji} ${low.name} is your quiet corner, only ${byP[low.id]} so far. The juice is richest where you haven’t squeezed yet.`);
+  const st = stats(m);
+  deck.push(`🏆 Your longest run is ${st.best} fully squeezed day${st.best === 1 ? '' : 's'} in a row. ${st.streak ? 'You’re on ' + st.streak + ' right now.' : 'Time to beat it.'}`);
+  deck.push(`🧃 You’ve fully squeezed ${st.total} day${st.total === 1 ? '' : 's'}. That’s about ${(st.total * 0.25).toFixed(1)} glasses of juice.`);
+  const dayCount = new Set(done.map(e => e.date)).size;
+  deck.push(`📅 ${done.length} wins across ${dayCount} active day${dayCount === 1 ? '' : 's'}: an average of ${(done.length / dayCount).toFixed(1)} per day.`);
+  // best weekday
+  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], wd = Array(7).fill(0);
+  done.forEach(e => wd[parse(e.date).getDay()]++);
+  const best = wd.indexOf(Math.max(...wd));
+  if (dayCount >= 2) deck.push(`⚡ ${names[best]} is your power day, with ${wd[best]} wins logged. Schedule your hardest P there.`);
+  // favorite word
+  const words = {};
+  done.forEach(e => e.text.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).forEach(w => { if (w.length > 3 && !STOP.has(w)) words[w] = (words[w] || 0) + 1; }));
+  const top3 = Object.entries(words).sort((a, b) => b[1] - a[1])[0];
+  if (top3 && top3[1] >= 2) deck.push(`🗣️ Your most-used word is “${top3[0]}”, appearing ${top3[1]} times. It says a lot about what fills your days.`);
+  // biggest day
+  const perDay = {}; done.forEach(e => perDay[e.date] = (perDay[e.date] || 0) + 1);
+  const bigDay = Object.keys(perDay).sort((a, b) => perDay[b] - perDay[a])[0];
+  deck.push(`💥 Your biggest day was ${dayLabel(bigDay)} with ${perDay[bigDay]} wins. Proof you can do it.`);
+  // plan follow-through
+  const planned = state.entries.filter(e => e.date <= today && (e.planned || e.done === false));
+  if (planned.length >= 2) {
+    const pd = planned.filter(isDone).length, r = Math.round(pd / planned.length * 100);
+    deck.push(`📝 You’ve finished ${pd} of ${planned.length} things you planned (${r}%). ${r >= 70 ? 'You follow through.' : 'Plan a little lighter and you’ll win more.'}`);
+  }
+  // time capsule
+  const ago = fmt(addDays(parse(today), -30)), past = done.filter(e => e.date === ago);
+  if (past.length) deck.push(`⏳ 30 days ago today you did: “${past[0].text}”. Look how far you’ve come.`);
+  const wild = Object.values(state.wild || {}).filter(w => w.done).length;
+  if (wild) deck.push(`🃏 You’ve played ${wild} Wild Card${wild === 1 ? '' : 's'}. The brave ones are the ones who get the juice.`);
+  return deck;
+}
+function consultOracle() {
+  const deck = oracleDeck();
+  let i; do { i = Math.floor(Math.random() * deck.length); } while (i === lastOracle && deck.length > 1);
+  lastOracle = i;
+  const orb = $('orb'), out = $('oracleOut');
+  orb.classList.remove('think'); void orb.offsetWidth; orb.classList.add('think');
+  out.classList.remove('show'); out.textContent = '…';
+  setTimeout(() => { out.textContent = deck[i]; void out.offsetWidth; out.classList.add('show'); }, 700);
+}
+// ---------- Weekly review: reflect, then set one concrete intention for the week ----------
+const weekStartOf = ds => fmt(addDays(parse(ds), -parse(ds).getDay()));
+function weekStats(m, ws, today) {
+  const days = Array.from({ length: 7 }, (_, i) => fmt(addDays(parse(ws), i)));
+  const elapsed = days.filter(d => d <= today).length;
+  const byP = Object.fromEntries(PS.map(p => [p.id, days.filter(d => m[d] && m[d].has(p.id)).length]));
+  const slots = days.reduce((n, d) => n + countOn(m, d), 0);
+  const full = days.filter(d => countOn(m, d) === 5).length;
+  let bestDay = null;
+  days.forEach(d => { if (d <= today && countOn(m, d) > 0 && (!bestDay || countOn(m, d) >= countOn(m, bestDay))) bestDay = d; });
+  return { days, elapsed, byP, slots, full, bestDay, pct: elapsed ? Math.round(slots / (elapsed * 5) * 100) : null };
+}
+function renderReview() {
+  const today = todayStr(), m = hitsByDate();
+  const ws = fmt(addDays(parse(weekStartOf(today)), reviewOffset * 7)), we = fmt(addDays(parse(ws), 6));
+  const st = weekStats(m, ws, today), prev = weekStats(m, fmt(addDays(parse(ws), -7)), today);
+  const rv = state.reviews[ws] || {};
+  const started = st.elapsed > 0;
+  const level = st.pct === null ? '' : st.pct >= 90 ? 'Fresh squeezed 🍊' : st.pct >= 70 ? 'Rich juice' : st.pct >= 50 ? 'Half pressed' : st.pct >= 25 ? 'A few good drops' : 'Just getting started';
+  const missed = state.entries.filter(e => e.date >= ws && e.date <= we && e.date < today && !isDone(e)).length;
+  const weakest = [...PS].sort((a, b) => st.byP[a.id] - st.byP[b.id])[0];
+  const delta = st.pct !== null && prev.elapsed ? st.pct - prev.pct : null;
+
+  const bars = PS.map(p => `<div class="rvrow" style="--c:${p.color}"><span class="lab">${p.emoji} ${p.name}</span>
+      <span class="bar"><i style="width:${st.byP[p.id] / 7 * 100}%"></i></span><span>${st.byP[p.id]}/7</span></div>`).join('');
+
+  let bestHtml = '<div class="tag">Nothing logged this week yet.</div>';
+  if (st.bestDay) {
+    const items = state.entries.filter(e => e.date === st.bestDay && isDone(e)).slice(0, 4);
+    bestHtml = `<div class="tag">${esc(dayLabel(st.bestDay))} · ${countOn(m, st.bestDay)}/5 P’s</div>` +
+      items.map(e => `<div>${PS.find(p => p.id === e.p).emoji} ${esc(e.text)}</div>`).join('');
+  }
+
+  const canKeep = ws <= weekStartOf(today);
+  $('review').innerHTML = `
+    <div class="rvhead">
+      <h3 style="margin:0;font-size:1rem">${esc(dayLabel(ws))} – ${esc(dayLabel(we))}${reviewOffset === 0 ? ' · this week' : ''}</h3>
+      <div class="chips"><button data-rv="-1">◀ Earlier</button><button data-rv="0">This week</button><button data-rv="1" ${reviewOffset >= 1 ? 'disabled' : ''}>Later ▶</button></div>
+    </div>
+    ${started ? `<div class="rvhead"><div><span class="rvbig">${st.pct}%</span> <span>juice level · ${level}</span></div>
+      <div class="tag">${st.slots} P’s · ${st.full} fully squeezed day${st.full === 1 ? '' : 's'}${missed ? ` · ${missed} planned, not done` : ''}${delta === null ? '' : ` · ${delta >= 0 ? '▲ +' : '▼ '}${delta} pts vs last week`}</div></div>
+    <div class="rvgrid">
+      <div class="rvbox"><h4>Balance</h4>${bars}</div>
+      <div class="rvbox"><h4>Highlight of the week</h4>${bestHtml}
+        <h4 style="margin-top:12px">Suggested focus</h4>
+        <div>${weakest.emoji} <b>${weakest.name}</b> only showed up ${st.byP[weakest.id]} day${st.byP[weakest.id] === 1 ? '' : 's'}. ${st.byP[weakest.id] >= 7 ? 'Every P every day. Wow.' : 'Make it your focus next.'}</div></div>
+    </div>` : '<div class="tag">This week hasn’t started. Set an intention below.</div>'}
+    <div class="rvbox" style="margin-top:14px">
+      <h4>🎯 My intention for this week</h4>
+      <textarea class="rvtext" id="rvIntent" maxlength="240" placeholder="Be specific: “When I finish lunch, I will message one new person.” Plans with a when and a what get done far more often than good intentions.">${esc(rv.intention || '')}</textarea>
+      ${canKeep ? `<div class="chips kept" style="margin-top:8px"><span class="tag">Did I keep it?</span>
+        <button data-rvkept="yes" class="${rv.kept === true ? 'active' : ''}">✔ Yes</button>
+        <button data-rvkept="partly" class="${rv.kept === 'partly' ? 'active' : ''}">◑ Partly</button>
+        <button data-rvkept="no" class="${rv.kept === false ? 'active' : ''}">✖ Not this time</button></div>` : ''}
+    </div>`;
+}
+
+function setTab(t) {
+  tab = t;
+  try { localStorage.setItem('fivePs.tab', t); } catch (e) {}
+  render(); window.scrollTo(0, 0);
+}
+
+// ---------- banner: streak shield saves, and the "never miss twice" nudge ----------
+function renderBanner(m) {
+  const el = $('banner'), today = todayStr();
+  let dismissed = null;
+  try { dismissed = localStorage.getItem('fivePs.banner'); } catch (e) {}
+  if (dismissed === today) { el.hidden = true; return; }
+  const eng = streakEngine(m), yest = fmt(addDays(parse(today), -1));
+  const hasPast = Object.keys(m).some(d => d < yest);
+  let msg = null, warn = false;
+  if (eng.shielded.has(yest)) {
+    msg = `🛡️ <b>Your shield saved your streak yesterday.</b> It’s still alive at ${eng.streak}. Squeeze today to keep it. You have ${eng.shields} shield${eng.shields === 1 ? '' : 's'} left.`;
+  } else if (hasPast && countOn(m, yest) < 5 && countOn(m, today) < 5 && eng.total > 0) {
+    msg = `🍊 <b>Yesterday slipped. That’s fine.</b> The rule is never miss twice: one squeezed day today and you’re back on track.`;
+    warn = true;
+  }
+  if (!msg) { el.hidden = true; return; }
+  el.hidden = false; el.classList.toggle('warn', warn);
+  el.innerHTML = `<span>${msg}</span><button data-bannerclose="1" title="Dismiss">✕</button>`;
+}
+
 // ---------- render ----------
 const $ = id => document.getElementById(id);
 const ideaIdx = {};
 
 function render() {
+  $('tab-today').hidden = tab !== 'today';
+  $('tab-progress').hidden = tab !== 'progress';
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const m = hitsByDate();
   const today = todayStr();
   const future = current > today;
@@ -498,7 +875,8 @@ function render() {
     : 'Adding things you already did. Switch to "Plan it" to line up tasks.';
 
   const st = stats(m);
-  $('streak').textContent = st.streak; $('best').textContent = st.best; $('total').textContent = st.total;
+  $('streak').textContent = st.streak; $('best').textContent = st.best; $('total').textContent = st.total; $('shields').textContent = st.shields;
+  renderBanner(m);
 
   $('orangeSvg').innerHTML = orangeSvg(done, planned);
   $('glassSvg').innerHTML = glassSvg(done);
@@ -532,10 +910,17 @@ function render() {
   if (focused) { const el = document.querySelector(`.pcard input[data-p="${focused}"]`); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }
 
   $('heat').innerHTML = heatSvg(m);
-  $('heatLegend').innerHTML = 'Less ' + ['var(--empty)', '#5a4a3a', '#8a5a2b', '#c27a1f', '#f09a14'].map(c => `<i style="background:${c}"></i>`).join('') + '<i style="background:linear-gradient(135deg,#ffe066,#ff9f1c)"></i> Fully squeezed';
+  $('heatLegend').innerHTML = 'Less ' + ['var(--empty)', '#5a4a3a', '#8a5a2b', '#c27a1f', '#f09a14'].map(c => `<i style="background:${c}"></i>`).join('') + '<i style="background:linear-gradient(135deg,#ffe066,#ff9f1c)"></i> Fully squeezed <i style="background:#2f5fb3"></i> Shield used';
   const r = radarSvg(m);
   $('radar').innerHTML = r.svg; $('radarNote').textContent = r.note;
   renderWild(m);
+  if (tab === 'progress') {
+    renderHistory(); renderReview();
+    const win = windowEntries(), missed = win.filter(e => !isDone(e) && e.date <= todayStr()).length;
+    $('hintHistory').textContent = missed ? `${missed} planned, not done` : '';
+    const wk = weekStats(m, weekStartOf(todayStr()), todayStr());
+    $('hintReview').textContent = wk.pct === null ? '' : `this week: ${wk.pct}% juice level`;
+  }
   const info = monthInfo(current), o = orchardSvg(m, info);
   $('orchard').innerHTML = o.svg;
   $('orchardTitle').textContent = info.name;
@@ -767,7 +1152,7 @@ document.addEventListener('submit', ev => {
   const before = doneCount();
   state.entries.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    date: current, p: f.dataset.p, text, done: getMode() === 'done',
+    date: current, p: f.dataset.p, text, done: getMode() === 'done', planned: getMode() === 'plan',
   });
   input.value = '';
   save(); render();
@@ -780,6 +1165,27 @@ document.addEventListener('click', ev => {
   if (t.dataset.use) {
     const id = t.dataset.use, input = document.querySelector(`.pcard input[data-p="${id}"]`);
     input.value = IDEAS[id][ideaIdx[id] ?? 0]; input.focus(); return;
+  }
+  if (t.dataset.tab) { setTab(t.dataset.tab); return; }
+  if (t.dataset.hrange) { hist.range = t.dataset.hrange; render(); return; }
+  if (t.dataset.hstatus) { hist.status = t.dataset.hstatus; render(); return; }
+  if (t.dataset.hview) { hist.view = t.dataset.hview; render(); return; }
+  if (t.dataset.bannerclose) { try { localStorage.setItem('fivePs.banner', todayStr()); } catch (e) {} $('banner').hidden = true; return; }
+  if (t.dataset.csv) { downloadCsv(); return; }
+  if ('rv' in t.dataset) { reviewOffset = t.dataset.rv === '0' ? 0 : Math.min(1, Math.max(-104, reviewOffset + Number(t.dataset.rv))); render(); return; }
+  if (t.dataset.rvkept) {
+    const ws = fmt(addDays(parse(weekStartOf(todayStr())), reviewOffset * 7));
+    const r = (state.reviews[ws] ||= {}), v = t.dataset.rvkept === 'yes' ? true : t.dataset.rvkept === 'no' ? false : 'partly';
+    r.kept = r.kept === v ? null : v; save(); render(); return;
+  }
+  if (t.dataset.oracle) { consultOracle(); return; }
+  if (t.dataset.hdone || t.dataset.hmove) {
+    const e = state.entries.find(x => x.id === (t.dataset.hdone || t.dataset.hmove)); if (!e) return;
+    const dateWas = e.date, before = (hitsByDate()[dateWas] || new Set()).size;
+    if (t.dataset.hdone) e.done = true; else { e.date = todayStr(); e.planned = true; }
+    save(); render();
+    if (t.dataset.hdone && dateWas === todayStr() && before < 5 && (hitsByDate()[dateWas] || new Set()).size === 5) celebrate();
+    return;
   }
   if (t.dataset.mode) { modeOverride = t.dataset.mode; render(); return; }
   if (t.closest && t.closest('[data-wildreveal]')) { revealWild(); return; }
@@ -795,7 +1201,7 @@ document.addEventListener('click', ev => {
   }
   if (t.dataset.reward) { celebrate({ reward: t.dataset.reward, instant: true }); return; }
   const dd = t.closest && t.closest('[data-date]');
-  if (dd) { goTo(dd.dataset.date); return; }
+  if (dd) { tab = 'today'; try { localStorage.setItem('fivePs.tab', 'today'); } catch (e) {} goTo(dd.dataset.date); window.scrollTo(0, 0); return; }
   const li = t.closest && t.closest('li[data-toggle]');
   if (li && current <= todayStr()) {
     const e = state.entries.find(x => x.id === li.dataset.toggle); if (!e) return;
@@ -804,6 +1210,15 @@ document.addEventListener('click', ev => {
     save(); render();
     if (before < 5 && doneCount() === 5) celebrate(rewardOpts());
   }
+});
+document.addEventListener('input', ev => {
+  if (ev.target.id !== 'rvIntent') return;
+  const ws = fmt(addDays(parse(weekStartOf(todayStr())), reviewOffset * 7));
+  (state.reviews[ws] ||= {}).intention = ev.target.value; save();
+});
+document.addEventListener('change', ev => {
+  if (ev.target.id === 'hfrom') { hist.from = ev.target.value; render(); }
+  if (ev.target.id === 'hto') { hist.to = ev.target.value; render(); }
 });
 $('prev').onclick = () => goTo(fmt(addDays(parse(current), -1)));
 $('next').onclick = () => { if (!$('next').disabled) goTo(fmt(addDays(parse(current), 1))); };
@@ -825,7 +1240,7 @@ $('file').onchange = async e => {
   try {
     const data = JSON.parse(await f.text());
     if (!data || !Array.isArray(data.entries)) throw 0;
-    if (confirm(`Replace current data with ${data.entries.length} entries from this backup?`)) { state = { entries: data.entries, wild: data.wild || {} }; save(); render(); }
+    if (confirm(`Replace current data with ${data.entries.length} entries from this backup?`)) { state = { entries: data.entries, wild: data.wild || {}, reviews: data.reviews || {} }; save(); render(); }
   } catch (err) { alert('That file is not a valid 5 P\'s backup.'); }
   e.target.value = '';
 };
@@ -833,6 +1248,17 @@ $('file').onchange = async e => {
 // roll over to the new day if the tab stays open past midnight
 let lastToday = todayStr();
 setInterval(() => { const t = todayStr(); if (t !== lastToday) { if (current === lastToday) current = t; lastToday = t; render(); } }, 60000);
+
+// remember which drop-downs are open
+let folds = {};
+try { folds = JSON.parse(localStorage.getItem('fivePs.folds')) || {}; } catch (e) {}
+document.querySelectorAll('details.fold').forEach(d => { d.open = !!folds[d.id]; });
+document.addEventListener('toggle', ev => {
+  const d = ev.target;
+  if (!d.matches || !d.matches('details.fold')) return;
+  folds[d.id] = d.open;
+  try { localStorage.setItem('fivePs.folds', JSON.stringify(folds)); } catch (e) {}
+}, true);
 
 setSound(soundOn);
 render();
