@@ -1,0 +1,6 @@
+{
+  "name": "five-ps-tests",
+  "private": true,
+  "scripts": { "test": "node run.js" },
+  "devDependencies": { "playwright-core": "1.57.0" }
+}
