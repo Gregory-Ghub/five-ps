@@ -22,6 +22,10 @@ It's a single static page with no build step, no dependencies and no account. It
 - Each P has a pool of 12–28 example tasks (Pain has the most), with a different suggestion each day and an "another" link to cycle.
 - An orange fills in one segment per P, and a juice glass fills alongside it. All six triggers a squeeze celebration with sound and a quote.
 
+**To-do list**
+- Everything you planned on an earlier day and never did collects in a **📋 To-do** card at the top of the Today tab, oldest first.
+- Add an item to tomorrow's plan (or to whichever future day you're viewing), add them all at once, log one as **done today**, or remove it. Adding *copies* the task, so history still shows the original as planned-but-missed.
+
 **Streaks and motivation**
 - **Streak shields:** every 7 fully squeezed days in a row earns a shield (max 2). A missed day spends a shield instead of resetting your streak ("never miss twice").
 - **Heatmap** of the last 26 weeks, and a **weekly balance radar** that points out your most neglected P.
@@ -80,7 +84,7 @@ The service worker serves cached files first and refreshes them in the backgroun
 
 ## Tests
 
-End-to-end tests drive the real app in headless Chromium (about 25 seconds, 126 checks):
+End-to-end tests drive the real app in headless Chromium (about 25 seconds, 151 checks):
 
 ```
 cd tests
@@ -89,7 +93,7 @@ npx playwright-core install chromium   # once
 npm test
 ```
 
-They cover saved data surviving a load, the sixth P and migrating old data, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
+They cover saved data surviving a load, the sixth P and migrating old data, the to-do list, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
 
 ## Data and privacy
 

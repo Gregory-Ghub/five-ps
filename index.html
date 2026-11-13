@@ -118,6 +118,10 @@
   .banner { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-top: 14px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(120deg, #1d2b4a, #231d2b); animation: fadeup .6s ease both; }
   .banner.warn { background: linear-gradient(120deg, #4a2f1d, #231d2b); }
   .banner button { background: none; border: none; color: var(--muted); padding: 0 4px; }
+  #todo h2 small { color: var(--muted); font-weight: 400; }
+  .todohead { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
+  .todonote { color: #ffe066; margin-top: 8px; }
+  .todonote a { cursor: pointer; text-decoration: underline; }
   input[type=date], input[type=time], textarea.rvtext { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; color-scheme: dark; }
   textarea.rvtext { width: 100%; min-height: 64px; resize: vertical; }
   .rvrow { display: flex; align-items: center; gap: 10px; margin: 5px 0; font-size: .9rem; }
@@ -223,6 +227,8 @@
     <button data-mode="plan">📝 Plan it</button>
   </div>
   <div class="modehint" id="modeHint"></div>
+
+  <section class="panel wide" id="todo"></section>
 
   <section class="hero">
     <div>
@@ -389,7 +395,7 @@ const isFullSet = (date, set) => !!set && neededIds(date).every(id => set.has(id
 const fullOn = (m, d) => isFullSet(d, m[d]);
 const dayFull = d => fullOn(hitsByDate(), d);
 const getMode = () => current > todayStr() ? 'plan' : (modeOverride || 'done');
-function goTo(date) { current = date; modeOverride = null; render(); }
+function goTo(date) { current = date; modeOverride = null; todoNote = ''; render(); }
 
 // Streak engine. Every 7 fully squeezed days in a row earns a shield (max 2).
 // A missed day spends a shield instead of resetting the streak ("never miss twice").
@@ -586,11 +592,12 @@ const dayLabel = ds => parse(ds).toLocaleDateString(undefined, { weekday: 'short
 
 function itemHtml(e, today, showDate) {
   const p = PS.find(x => x.id === e.p), st = statusOf(e, today), meta = STATUS[st];
+  const again = st === 'missed' && e.carried && e.carried !== 'removed' ? ` → re-planned ${dayLabel(e.carried)}` : '';
   const acts = (st === 'missed' || st === 'pending' ? `<button data-hdone="${e.id}">✔ Done</button>` : '')
              + (st === 'missed' ? `<button data-hmove="${e.id}">→ Today</button>` : '');
   return `<li class="hitem ${st}" style="--c:${p.color}"><span class="dot"></span>
     <span class="ht">${p.emoji} ${esc(e.text)}</span>
-    <span class="hs">${showDate ? esc(dayLabel(e.date)) + ' · ' : ''}${meta.icon} ${meta.label}</span>${acts}</li>`;
+    <span class="hs">${showDate ? esc(dayLabel(e.date)) + ' · ' : ''}${meta.icon} ${meta.label}${esc(again)}</span>${acts}</li>`;
 }
 
 function renderHistory() {
@@ -911,6 +918,7 @@ function render() {
   const r = radarSvg(m);
   $('radar').innerHTML = r.svg; $('radarNote').textContent = r.note;
   renderWild(m);
+  renderTodo();
   if (tab === 'progress') {
     renderHistory(); renderReview();
     const win = windowEntries(), missed = win.filter(e => !isDone(e) && e.date <= todayStr()).length;
@@ -1144,6 +1152,7 @@ document.addEventListener('click', ev => {
   if (t.dataset.hview) { hist.view = t.dataset.hview; render(); return; }
   if (t.dataset.bannerclose) { try { localStorage.setItem('fivePs.banner', todayStr()); } catch (e) {} $('banner').hidden = true; return; }
   if (t.dataset.csv) { downloadCsv(); return; }
+  if (todoClick(t)) return;
   if (t.dataset.backupnow) { exportBackup(); return; }
   if (t.dataset.backupclose) { lsSet(SNOOZE_KEY, todayStr()); renderBackup(); return; }
   if ('rv' in t.dataset) { reviewOffset = t.dataset.rv === '0' ? 0 : Math.min(1, Math.max(-104, reviewOffset + Number(t.dataset.rv))); render(); return; }
@@ -1240,6 +1249,76 @@ document.addEventListener('toggle', ev => {
   folds[d.id] = d.open;
   try { localStorage.setItem('fivePs.folds', JSON.stringify(folds)); } catch (e) {}
 }, true);
+
+// ---------- to-do: things planned on earlier days that never got done ----------
+let todoAll = false, todoNote = '';
+const TODO_SHOWN = 5;
+const overdue = () => {
+  const today = todayStr();
+  return state.entries.filter(e => !isDone(e) && e.date < today && !e.carried).sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+};
+const tomorrowStr = () => fmt(addDays(parse(todayStr()), 1));
+// while you're looking at a future day, items go there; otherwise they go to tomorrow
+const planTarget = () => (current > todayStr() ? current : tomorrowStr());
+const targetLabel = d => (d === tomorrowStr() ? 'Tomorrow' : dayLabel(d));
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+// copy (not move) so history still shows the original as planned-but-missed; the original is marked as carried
+function carry(e, date, done) {
+  e.carried = date;
+  if (!done && state.entries.some(x => x.date === date && x.p === e.p && x.text === e.text && !isDone(x))) return; // already planned there
+  state.entries.push({ id: newId(), date, p: e.p, text: e.text, done, planned: !done, from: e.id });
+}
+function renderTodo() {
+  const list = overdue(), today = todayStr(), target = planTarget(), label = targetLabel(target);
+  const shown = todoAll ? list : list.slice(0, TODO_SHOWN);
+  let html = `<h2>📋 To-do <small>· ${list.length ? `${list.length} planned earlier, not done` : 'all caught up'}</small></h2>`;
+  if (!list.length) html += `<div class="tag">Nothing is waiting from earlier days. 🎉</div>`;
+  else {
+    html += `<div class="todohead"><span class="tag">Pick what to add to your plan for ${esc(label.toLowerCase() === 'tomorrow' ? 'tomorrow' : label)}.</span>
+      <button data-todoall="1">+ Add all to ${esc(label)}</button></div>
+      <ul class="hlist">${shown.map(e => {
+        const p = PS.find(x => x.id === e.p), age = daysBetween(e.date, today);
+        return `<li class="hitem" style="--c:${p.color}"><span class="dot"></span><span class="ht">${p.emoji} ${esc(e.text)}</span>
+          <span class="hs">${esc(dayLabel(e.date))} · ${age} day${age === 1 ? '' : 's'} ago</span>
+          <button data-todoadd="${e.id}">+ ${esc(label)}</button><button data-tododone="${e.id}">✔ Did it today</button><button data-tododrop="${e.id}" title="Remove from this list">✕</button></li>`;
+      }).join('')}</ul>`;
+    if (list.length > TODO_SHOWN) html += `<button data-todomore="1" style="margin-top:8px">${todoAll ? 'Show fewer' : `Show all ${list.length}`}</button>`;
+  }
+  if (todoNote) html += `<div class="tag todonote">${todoNote}</div>`;
+  $('todo').innerHTML = html;
+}
+function todoClick(t) {
+  const find = id => state.entries.find(x => x.id === id);
+  const today = todayStr();
+  if (t.dataset.todomore) { todoAll = !todoAll; render(); return true; }
+  if (t.dataset.todoadd) {
+    const e = find(t.dataset.todoadd), target = planTarget(); if (!e) return true;
+    carry(e, target, false);
+    todoNote = `Added “${esc(e.text)}” to ${esc(targetLabel(target))}. <a data-date="${target}">View that day</a>`;
+    save(); render(); return true;
+  }
+  if (t.dataset.todoall) {
+    const target = planTarget(), list = overdue();
+    list.forEach(e => carry(e, target, false));
+    todoNote = `Added ${list.length} item${list.length === 1 ? '' : 's'} to ${esc(targetLabel(target))}. <a data-date="${target}">View that day</a>`;
+    save(); render(); return true;
+  }
+  if (t.dataset.tododone) {
+    const e = find(t.dataset.tododone); if (!e) return true;
+    const before = dayFull(today);
+    carry(e, today, true);
+    todoNote = `Logged “${esc(e.text)}” as done today.`;
+    save(); render();
+    if (!before && dayFull(today)) celebrate();
+    return true;
+  }
+  if (t.dataset.tododrop) {
+    const e = find(t.dataset.tododrop); if (!e) return true;
+    e.carried = 'removed'; todoNote = `Removed “${esc(e.text)}” from the list.`;
+    save(); render(); return true;
+  }
+  return false;
+}
 
 // ---------- daily reminder ----------
 // A static page can't receive server push. The page fires the reminder while it is open in a
