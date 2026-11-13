@@ -36,7 +36,7 @@ const { check, done } = makeChecker();
   await dispatch();
   await page.goto(BASE + '/index.html');
   const first = await shown();
-  check('app closed: worker posts the reminder', first.length === 1 && /Nothing squeezed|of 5/.test(first[0]), JSON.stringify(first));
+  check('app closed: worker posts the reminder', first.length === 1 && /Nothing squeezed|of 6/.test(first[0]), JSON.stringify(first));
   const after = await page.evaluate(() => idbGet());
   check('worker records that it sent today\'s reminder', after && after.last && after.last.length === 10, JSON.stringify(after));
 

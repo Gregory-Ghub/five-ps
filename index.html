@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The 5 P's – Squeeze the Juice</title>
+<title>The 6 P's – Squeeze the Juice</title>
 <meta name="theme-color" content="#17131c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="5 P's">
+<meta name="apple-mobile-web-app-title" content="6 P's">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -15,6 +15,8 @@
 <style>
   [hidden] { display: none !important; } /* class display rules (.banner, flex rows) must not override the hidden attribute */
   :root {
+    --sq-n: 6; /* number of P's = squeezes in the celebration; kept in sync from JS */
+    --sq-end: calc(.3s + var(--sq-n) * .85s);
     --bg: #17131c; --card: #231d2b; --card2: #2c2536; --text: #f6f1ea; --muted: #a79fb3;
     --line: #3a3244; --empty: #3a3340;
     --payday: #2ecc71; --play: #ff4fa3; --pain: #e63946; --partnership: #3a86ff; --physical: #ffb703;
@@ -83,34 +85,28 @@
   .legend { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: .8rem; margin-top: 8px; flex-wrap: wrap; }
   .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
   .radar svg { width: 100%; max-width: 320px; display: block; margin: 0 auto; }
-  .orchard svg { width: 100%; display: block; }
   footer { margin: 20px 0 8px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; color: var(--muted); font-size: .85rem; }
 
   /* ---------- Celebration ---------- */
   #celebrate { position: fixed; inset: 0; background: radial-gradient(circle at 50% 30%, #2b2034 0%, #0c080f 70%); display: none; z-index: 50; align-items: center; justify-content: safe center; flex-direction: column; text-align: center; overflow-y: auto; overflow-x: hidden; padding: 16px 0; }
   #celebrate.show { display: flex; }
   #drops { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
-  #celebrate h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: .22em; font-size: clamp(1.5rem, 5vw, 2.4rem); margin: 4px 0 0; color: #ffd9a0; animation: fadeup 1s ease both 5s; }
-  #celebrate #rare { margin: 8px 0 0; font-size: .8rem; letter-spacing: .25em; color: #ffe066; animation: fadeup 1s ease both 5.2s; }
-  #celebrate #wise { font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; max-width: 540px; margin: 14px 20px 6px; font-style: italic; color: #efe6da; animation: fadeup 1s ease both 5.5s; }
+  #celebrate h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; letter-spacing: .22em; font-size: clamp(1.5rem, 5vw, 2.4rem); margin: 4px 0 0; color: #ffd9a0; animation: fadeup 1s ease both calc(var(--sq-end) + .45s); }
+  #celebrate #rare { margin: 8px 0 0; font-size: .8rem; letter-spacing: .25em; color: #ffe066; animation: fadeup 1s ease both calc(var(--sq-end) + .65s); }
+  #celebrate #wise { font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; max-width: 540px; margin: 14px 20px 6px; font-style: italic; color: #efe6da; animation: fadeup 1s ease both calc(var(--sq-end) + .95s); }
   #celebrate #wise small { display: block; font-style: normal; font-family: system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; font-size: .7rem; color: var(--muted); margin-top: 8px; }
-  #celebrate #closeCele { margin-top: 16px; background: transparent; border-color: #5a4d66; animation: fadeup 1s ease both 6s; }
+  #celebrate #closeCele { margin-top: 16px; background: transparent; border-color: #5a4d66; animation: fadeup 1s ease both calc(var(--sq-end) + 1.45s); }
   #celebrate svg { width: min(72vw, 320px); max-height: 52vh; }
   .drop { position: absolute; left: 50%; top: 40%; width: var(--s); height: calc(var(--s) * 1.3); background: var(--c); border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%; opacity: 0; animation: splash 1.8s cubic-bezier(.2,.7,.3,1) forwards; animation-delay: var(--d); }
 
   /* a cut orange gripped from the side: fingertips and thumb close in, juice runs into the glass */
-  .sq-orange  { transform-box: fill-box; transform-origin: 50% 100%; animation: osq .85s cubic-bezier(.45,0,.25,1) .3s 5, odone .6s ease-in 4.55s forwards; }
-  .sq-hand    { animation: hsq .85s cubic-bezier(.45,0,.25,1) .3s 5, hout .6s ease-in 4.55s forwards; }
+  .sq-orange  { transform-box: fill-box; transform-origin: 50% 100%; animation: osq .85s cubic-bezier(.45,0,.25,1) .3s var(--sq-n), odone .6s ease-in var(--sq-end) forwards; }
+  .sq-hand    { animation: hsq .85s cubic-bezier(.45,0,.25,1) .3s var(--sq-n), hout .6s ease-in var(--sq-end) forwards; }
   .stream { transform-box: fill-box; transform-origin: 50% 0%; transform: scaleY(0); opacity: 0; }
   .fill   { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); }
   .ripple { transform-box: fill-box; transform-origin: 50% 50%; opacity: 0; }
-  .face   { opacity: 0; animation: fadeup 1s ease both 4.95s; }
+  .face   { opacity: 0; animation: fadeup 1s ease both calc(var(--sq-end) + .4s); }
   .gold-glow { filter: drop-shadow(0 0 8px #ffd23f); }
-  #celebrate.instant h2 { animation-delay: .3s; }
-  #celebrate.instant #rare { animation-delay: .6s; }
-  #celebrate.instant #wise { animation-delay: .9s; }
-  #celebrate.instant #closeCele { animation-delay: 1.3s; }
-  #celeScene.tree svg { width: min(92vw, 560px); max-height: 60vh; }
   #muteCele { position: fixed; top: 12px; right: 12px; z-index: 60; background: transparent; border-color: #5a4d66; }
   [data-date] { cursor: pointer; }
   details.fold > summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; font-size: 1.05rem; }
@@ -178,9 +174,6 @@
   .wildface .played { color: var(--c); font-weight: 700; }
   @keyframes shimmer { to { background-position: -250% 0; } }
   @keyframes flip { from { opacity: 0; transform: perspective(600px) rotateY(90deg); } to { opacity: 1; transform: perspective(600px) rotateY(0); } }
-  .todayring { transform-box: fill-box; transform-origin: 50% 50%; animation: pulse 1.8s ease-in-out infinite; }
-  .trophies { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: center; color: var(--muted); font-size: .85rem; }
-  .trophies button { border-color: #8a6a1f; color: #ffe066; }
   @keyframes osq { 0%,100% { transform: scale(1,1); } 45% { transform: scale(.84,1.1); } }
   @keyframes hsq { 0%,100% { transform: translateX(0); } 45% { transform: translateX(8px); } }
   @keyframes odone { to { transform: scale(.6,.4); opacity: 0; } }
@@ -200,8 +193,8 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>🍊 The 5 P's <span>· Squeeze the Juice</span></h1>
-      <div class="tag">Payday · Play · Pain · Partnership · Physical — get all five, leave nothing in the peel.</div>
+      <h1>🍊 The 6 P's <span>· Squeeze the Juice</span></h1>
+      <div class="tag">Payday · Play · Pain · Partnership · Physical · Passion — get all six, leave nothing in the peel.</div>
     </div>
     <div class="stats">
       <div class="stat"><b id="streak">0</b><small>🔥 streak</small></div>
@@ -238,7 +231,7 @@
     </div>
     <div>
       <div id="glassSvg"></div>
-      <div class="score"><b id="scoreNum">0</b> / 5 squeezed <small id="planNote"></small></div>
+      <div class="score"><b id="scoreNum">0</b> / <span id="scoreTotal">6</span> squeezed <small id="planNote"></small></div>
       <button class="replay" id="replay" hidden>🎉 Replay the squeeze</button>
     </div>
   </section>
@@ -260,12 +253,6 @@
       <div id="radar"></div>
       <div class="tag" id="radarNote" style="text-align:center"></div>
     </div>
-  </section>
-
-  <section class="panel wide orchard">
-    <h2>🌳 <span id="orchardTitle">Your orchard</span> <small id="orchardNote"></small></h2>
-    <div id="orchard"></div>
-    <div class="trophies" id="trophies"></div>
   </section>
 
   <details class="panel wide fold" id="foldReview">
@@ -330,13 +317,17 @@ const PS = [
   { id: 'pain',        name: 'Pain',        emoji: '🔥', color: '#e63946', blurb: 'Something hard you did on purpose' },
   { id: 'partnership', name: 'Partnership', emoji: '🤝', color: '#3a86ff', blurb: 'Network, or turn a stranger into a friend' },
   { id: 'physical',    name: 'Physical',    emoji: '💪', color: '#ffb703', blurb: 'Exercise for your health' },
+  { id: 'passion',     name: 'Passion',     emoji: '🎢', color: '#a855f7', blurb: 'Something that adds excitement to your day' },
 ];
+const SEG = 360 / PS.length;                                              // degrees per wedge
+const CORE = ['payday', 'play', 'pain', 'partnership', 'physical'];       // the original five: days before Passion existed only needed these
 const IDEAS = {
-  payday: ['Send one outreach message to a potential customer', 'Ship one small improvement to your product', 'Ask someone what they would pay to solve a problem', 'Write down one new income idea and a first step', 'Follow up with a lead you have gone quiet on'],
-  play: ['Play a game you loved as a kid', 'Build something pointless just because', 'Go somewhere you have never been', 'Watch something purely for joy', 'Jam on an instrument or doodle for 15 minutes'],
-  pain: ['Take a 60-second cold shower', 'Do the task you have been avoiding for a week', 'Fast until a set time or skip a comfort', 'Do 10 minutes of something you are bad at', 'Have the conversation you keep putting off'],
-  partnership: ['Start a conversation with one stranger', 'Message an old friend you have not talked to in a year', 'Ask someone you admire for a 15 minute chat', 'Introduce two people who should know each other', 'Compliment a stranger and keep talking'],
-  physical: ['Go for a 30 minute walk or run', 'Do a bodyweight circuit: pushups, squats, plank', 'Stretch or do yoga for 15 minutes', 'Lift something heavy', 'Take the stairs and walk after every meal'],
+  payday: ['Send one outreach message to a potential customer', 'Ship one small improvement to your product', 'Ask someone what they would pay to solve a problem', 'Write down one new income idea and a first step', 'Follow up with a lead you have gone quiet on', 'Raise a price on something, even a little', 'Ask a happy customer for a testimonial or referral', 'Spend 25 focused minutes on your highest-value task', 'Send an invoice, or chase an unpaid one', 'Study how a competitor makes money and note one thing to copy', 'Publish something that shows your work', 'Cancel or renegotiate one expense you do not need'],
+  play: ['Play a game you loved as a kid', 'Build something pointless just because', 'Go somewhere you have never been', 'Watch something purely for joy', 'Jam on an instrument or doodle for 15 minutes', 'Challenge a friend to a quick game', 'Dance to one song, badly and loudly', 'Cook something you have never made, just for fun', 'Take photos of five beautiful things on a walk', 'Read a few chapters of a novel, not a work book', 'Start a silly side project with no goal', 'Do something your 10-year-old self would love'],
+  pain: ['Take a 60-second cold shower', 'Do the task you have been avoiding for a week', 'Fast until a set time or skip a comfort', 'Do 10 minutes of something you are bad at', 'Have the conversation you keep putting off', 'Wake up 30 minutes earlier than you planned', 'Go a full day without added sugar', 'Hold a plank or wall sit past the point you want to quit', 'Do 50 burpees, in as many sets as you need', 'Walk or run one extra mile', 'Write the email or message you have been dreading', 'Say no to something you would normally say yes to', 'Spend 30 minutes in silence with no phone or music', 'Ask for something you expect to be told no to', 'Message someone who intimidates you', 'Take the stairs everywhere today', 'Do a full hour of deep work with zero distractions', 'Eat only plain, simple food today', 'Tackle the one chore you keep ignoring', 'Speak up first in a meeting or group', 'Open the bill or statement you have been avoiding', 'Do your workout in the cold or the rain', 'Sit with boredom for 10 minutes without reaching for your phone', 'Admit a mistake out loud to someone it affects', 'Do 100 pushups today, in as many sets as you need', 'Skip the coffee, snack or scroll you reach for on autopilot', 'Go to bed on time even though you want to stay up', 'Learn something hard for 20 minutes, until it frustrates you'],
+  partnership: ['Start a conversation with one stranger', 'Message an old friend you have not talked to in a year', 'Ask someone you admire for a 15 minute chat', 'Introduce two people who should know each other', 'Compliment a stranger and keep talking', 'Reply properly to a message you have been ignoring', 'Ask a friend how they are really doing, and listen', 'Thank a colleague or mentor in specific detail', 'Share something useful with someone who would benefit', 'Make a plan to meet someone this week', 'Introduce yourself to a neighbor', 'Go to a group or event and talk to three people'],
+  physical: ['Go for a 30 minute walk or run', 'Do a bodyweight circuit: pushups, squats, plank', 'Stretch or do yoga for 15 minutes', 'Lift something heavy', 'Take the stairs and walk after every meal', 'Do 20 minutes of intervals, hard then easy', 'Cycle somewhere instead of driving', 'Lift weights for 30 minutes', 'Do a 10 minute mobility routine', 'Play a sport that gets you running', 'Swim, hike or climb something', 'Walk 10,000 steps today'],
+  passion: ['Do something that gives you butterflies, however small', 'Start the project you keep daydreaming about', 'Learn a skill purely because it excites you', 'Go to something live: sports, music or a show', 'Plan a trip or an adventure, even a small one', 'Try a food, class or place you have never tried', 'Put on the music that pumps you up and move', 'Take a small risk you will be proud of', 'Create something: write, draw, build or record', 'Ask someone interesting your most exciting question', 'Tell someone about a dream you have not shared', 'Do the thing you keep saying you will do someday', 'Chase a sunrise or a sunset', 'Make a bold, visible move toward a goal that thrills you'],
 };
 const KEY = 'fivePs.v1';
 const MAX_AHEAD = 30; // days you can plan into the future
@@ -362,12 +353,22 @@ function validEntry(e) {
     && PS.some(p => p.id === e.p);
 }
 function plainObj(o) { return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
+function validDate(d) { return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(parse(d)); } // a function declaration: load() runs before later consts exist
 function sanitize(s) {
-  return { entries: s.entries.filter(validEntry), wild: plainObj(s.wild), reviews: plainObj(s.reviews) };
+  // passionFrom: the first day the 6th P existed. Earlier days stay "full" with the original five.
+  return { entries: s.entries.filter(validEntry), wild: plainObj(s.wild), reviews: plainObj(s.reviews), passionFrom: validDate(s.passionFrom) ? s.passionFrom : todayStr() };
 }
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) return sanitize(s); } catch (e) { console.error('5 P\'s: could not load saved data', e); }
-  return { entries: [], wild: {}, reviews: {} };
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.entries)) {
+      const clean = sanitize(s);
+      // write the migration date straight away, or "today" would drift forward on every visit
+      if (clean.passionFrom !== s.passionFrom) { try { localStorage.setItem(KEY, JSON.stringify(clean)); } catch (e) {} }
+      return clean;
+    }
+  } catch (e) { console.error('6 P\'s: could not load saved data', e); }
+  return { entries: [], wild: {}, reviews: {}, passionFrom: todayStr() };
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} try { syncSw(); } catch (e) {} }
 
@@ -381,6 +382,12 @@ function plannedOn(date) {
   return new Set(state.entries.filter(e => e.date === date && !isDone(e)).map(e => e.p));
 }
 const countOn = (m, d) => (m[d] ? m[d].size : 0);
+// which P's a day needs to count as fully squeezed: just the original five before Passion existed
+const neededIds = date => (date < state.passionFrom ? CORE : PS.map(p => p.id));
+const dayTotal = date => neededIds(date).length;
+const isFullSet = (date, set) => !!set && neededIds(date).every(id => set.has(id));
+const fullOn = (m, d) => isFullSet(d, m[d]);
+const dayFull = d => fullOn(hitsByDate(), d);
 const getMode = () => current > todayStr() ? 'plan' : (modeOverride || 'done');
 function goTo(date) { current = date; modeOverride = null; render(); }
 
@@ -393,7 +400,7 @@ function streakEngine(m) {
   if (!dates.length) return res;
   let streak = 0, shields = 0;
   for (let d = parse(dates[0]); fmt(d) <= today; d = addDays(d, 1)) {
-    const ds = fmt(d), full = countOn(m, ds) === 5;
+    const ds = fmt(d), full = fullOn(m, ds);
     if (full) {
       streak++; res.total++; res.best = Math.max(res.best, streak);
       if (streak % 7 === 0 && shields < 2) shields++;
@@ -408,10 +415,10 @@ function streakEngine(m) {
 function stats(m) { const e = streakEngine(m); return { streak: e.streak, best: e.best, total: e.total, shields: e.shields }; }
 
 // ---------- SVG builders ----------
-function orangeSvg(done, planned) {
+function orangeSvg(done, planned, date) {
   const cx = 100, cy = 110, r = 70, inner = 58;
   const wedge = (i, rad) => {
-    const a0 = (-90 + i * 72) * Math.PI / 180, a1 = (-90 + (i + 1) * 72) * Math.PI / 180;
+    const a0 = (-90 + i * SEG) * Math.PI / 180, a1 = (-90 + (i + 1) * SEG) * Math.PI / 180;
     const x0 = cx + rad * Math.cos(a0), y0 = cy + rad * Math.sin(a0);
     const x1 = cx + rad * Math.cos(a1), y1 = cy + rad * Math.sin(a1);
     return `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${rad},${rad} 0 0 1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`;
@@ -421,8 +428,8 @@ function orangeSvg(done, planned) {
     if (planned.has(p.id)) return `<path d="${wedge(i, inner)}" fill="${p.color}" fill-opacity=".16" stroke="${p.color}" stroke-width="2" stroke-dasharray="5 4"/>`;
     return `<path d="${wedge(i, inner)}" fill="var(--empty)" stroke="#fff3" stroke-width="2"/>`;
   }).join('');
-  const full = done.size === 5;
-  return `<svg viewBox="0 0 200 210" aria-label="Orange with ${done.size} of 5 segments lit">
+  const full = isFullSet(date, done);
+  return `<svg viewBox="0 0 200 210" aria-label="Orange with ${done.size} of ${PS.length} segments lit">
     <path d="M100 40 C100 25 112 18 126 16 C124 30 114 40 100 40Z" fill="#3fa34d"/>
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="${full ? '#ffd166' : 'var(--orange)'}"/>
     <circle cx="${cx}" cy="${cy}" r="${inner + 3}" fill="#fff3d6"/>
@@ -432,10 +439,10 @@ function orangeSvg(done, planned) {
 }
 function glassSvg(done) {
   const layers = PS.map((p, i) => {
-    const h = 24, y = 170 - (i + 1) * h;
+    const h = 120 / PS.length, y = 170 - (i + 1) * h;
     return `<rect x="40" y="${y}" width="120" height="${h}" fill="${done.has(p.id) ? p.color : 'transparent'}" clip-path="url(#gclip)"/>`;
   }).join('');
-  return `<svg viewBox="0 0 200 200" aria-label="Juice glass ${done.size} of 5 full">
+  return `<svg viewBox="0 0 200 200" aria-label="Juice glass ${done.size} of ${PS.length} full">
     <defs><clipPath id="gclip"><path d="M40 40 L160 40 L148 170 Q146 180 136 180 L64 180 Q54 180 52 170 Z"/></clipPath></defs>
     <path d="M40 40 L160 40 L148 170 Q146 180 136 180 L64 180 Q54 180 52 170 Z" fill="#ffffff0d"/>
     ${layers}
@@ -443,21 +450,22 @@ function glassSvg(done) {
     <path d="M150 20 L120 70" stroke="#ff9f1c" stroke-width="5" stroke-linecap="round"/>
   </svg>`;
 }
+const HEAT_SHADES = ['var(--empty)', '#5a4a3a', '#7a5430', '#a06a24', '#c27a1f', '#f09a14'];
 function heatSvg(m) {
   const shielded = streakEngine(m).shielded;
   const weeks = 26, cell = 14, gap = 3;
   const today = parse(todayStr());
   const first = addDays(today, -today.getDay() - (weeks - 1) * 7); // Sunday of first week
-  const shades = ['var(--empty)', '#5a4a3a', '#8a5a2b', '#c27a1f', '#f09a14', null];
+  const shades = HEAT_SHADES;
   let out = '';
   for (let w = 0; w < weeks; w++) for (let dow = 0; dow < 7; dow++) {
     const d = addDays(first, w * 7 + dow);
     if (d > today) continue;
     const s = fmt(d), n = countOn(m, s);
-    const isShield = n < 5 && shielded.has(s);
-    const fill = n === 5 ? 'url(#gold)' : isShield ? '#2f5fb3' : shades[n];
+    const full = isFullSet(s, m[s]), isShield = !full && shielded.has(s);
+    const fill = full ? 'url(#gold)' : isShield ? '#2f5fb3' : shades[Math.min(n, shades.length - 1)];
     const sel = s === current ? ' stroke="#fff" stroke-width="2"' : '';
-    out += `<rect data-date="${s}" x="${w * (cell + gap)}" y="${dow * (cell + gap)}" width="${cell}" height="${cell}" rx="3" fill="${fill}"${sel}><title>${s}: ${n}/5${isShield ? ' \ud83d\udee1\ufe0f shield used' : ''}</title></rect>`;
+    out += `<rect data-date="${s}" x="${w * (cell + gap)}" y="${dow * (cell + gap)}" width="${cell}" height="${cell}" rx="3" fill="${fill}"${sel}><title>${s}: ${n}/${dayTotal(s)}${isShield ? ' \ud83d\udee1\ufe0f shield used' : ''}</title></rect>`;
   }
   const W = weeks * (cell + gap), H = 7 * (cell + gap);
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -468,7 +476,7 @@ function radarSvg(m) {
   const days = Array.from({ length: 7 }, (_, i) => fmt(addDays(parse(todayStr()), -i)));
   const vals = PS.map(p => days.filter(d => m[d] && m[d].has(p.id)).length);
   const pt = (i, f) => {
-    const a = (-90 + i * 72) * Math.PI / 180;
+    const a = (-90 + i * SEG) * Math.PI / 180;
     return [cx + R * f * Math.cos(a), cy + R * f * Math.sin(a)];
   };
   const ring = f => PS.map((_, i) => pt(i, f).map(v => v.toFixed(1)).join(',')).join(' ');
@@ -491,78 +499,13 @@ function radarSvg(m) {
     ${dots}${labels}</svg>`, note };
 }
 
-// ---------- Orchard: one tree per month, one orange per day ----------
-function monthInfo(dateStr) {
-  const d = parse(dateStr), y = d.getFullYear(), mo = d.getMonth();
-  return { y, mo, n: new Date(y, mo + 1, 0).getDate(), key: `${y}-${pad(mo + 1)}`,
-           name: d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) };
-}
-function monthFull(m, info) {
-  let full = 0;
-  for (let day = 1; day <= info.n; day++) if (countOn(m, `${info.key}-${pad(day)}`) === 5) full++;
-  return full;
-}
-function earnedMonths(m) {
-  const keys = new Set(Object.keys(m).map(d => d.slice(0, 7)));
-  return [...keys].sort().reverse().map(k => monthInfo(k + '-01')).filter(i => monthFull(m, i) === i.n);
-}
-// Each day's orange: hanging = still to come (or today, pulsing); picked = squeezed;
-// grey = that day slipped by. A month with every day squeezed turns the whole tree golden.
-function orchardSvg(m, info, opts = {}) {
-  const today = todayStr(), full = monthFull(m, info), complete = full === info.n;
-  const gold = opts.gold ?? complete;
-  const W = 600, H = 360, ground = 322, cx = 300, cy = 140, RX = 200, RY = 100, r = 12;
-  let canopy = '', fruit = '';
-  const blobs = [[300, 140, 250, 125], [150, 150, 80, 70], [450, 150, 80, 70], [220, 78, 90, 60], [380, 78, 90, 60], [300, 58, 100, 55]];
-  canopy = blobs.map(([x, y, rx, ry], i) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${gold ? (i % 2 ? '#4fa85a' : '#3f9a4a') : (i % 2 ? '#3a8f45' : '#2f7d3f')}"/>`).join('');
-  for (let k = 0; k < info.n; k++) {
-    const day = k + 1, date = `${info.key}-${pad(day)}`, n = countOn(m, date);
-    const rad = Math.sqrt((k + 0.5) / info.n), th = k * 2.399963;
-    const x = (cx + rad * Math.cos(th) * RX).toFixed(1), y = (cy + rad * Math.sin(th) * RY).toFixed(1);
-    const label = `<text x="${x}" y="${(+y + 3.5).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="#fff" pointer-events="none">${day}</text>`;
-    const tip = `<title>${date}: ${n}/5${n === 5 ? ' ✓ picked' : ''}</title>`;
-    const picked = n === 5, isToday = date === today, past = date < today;
-    let g;
-    if (picked && !gold) {
-      g = `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-dasharray="3 3"/>
-           <text x="${x}" y="${(+y + 4).toFixed(1)}" font-size="12" text-anchor="middle" fill="#ffe066" pointer-events="none">✓</text>`;
-    } else if (picked && gold) {
-      g = `<circle cx="${x}" cy="${y}" r="${r + 1}" fill="url(#ogold)" stroke="#fff3b0" stroke-width="1.5"/>
-           <text x="${x}" y="${(+y + 4).toFixed(1)}" font-size="12" font-weight="700" text-anchor="middle" fill="#7a4a00" pointer-events="none">✓</text>`;
-    } else if (past) {
-      g = `<circle cx="${x}" cy="${y}" r="${r - 1}" fill="#6f6275" opacity=".85"/>${label}`;
-    } else {
-      g = `${isToday ? `<circle class="todayring" cx="${x}" cy="${y}" r="${r + 3}" fill="none" stroke="#ffe066" stroke-width="2.5"/>` : ''}
-           <line x1="${x}" y1="${(+y - r).toFixed(1)}" x2="${x}" y2="${(+y - r - 4).toFixed(1)}" stroke="#2a5a22" stroke-width="2"/>
-           <circle cx="${x}" cy="${y}" r="${r}" fill="url(#og)"/>${label}`;
-    }
-    fruit += `<g data-date="${date}">${tip}${g}</g>`;
-  }
-  const bask = Math.min(full, 5);
-  const basket = `<path d="M36 300 L132 300 L122 338 L46 338 Z" fill="#8a5a2b" stroke="#5a3a1b" stroke-width="2"/>
-    ${Array.from({ length: bask }, (_, i) => `<circle cx="${56 + i * 17}" cy="298" r="11" fill="url(#og)"/>`).join('')}
-    <text x="84" y="324" font-size="13" font-weight="700" text-anchor="middle" fill="#f6f1ea">×${full}</text>`;
-  const banner = complete ? `<text x="300" y="26" font-size="19" font-weight="700" text-anchor="middle" fill="#ffe066" letter-spacing="2">🏆 LIVING LIFE TO THE FULLEST 🏆</text>` : '';
-  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${info.name}: ${full} of ${info.n} oranges picked">
-    <defs>
-      <radialGradient id="og" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#e8780a"/></radialGradient>
-      <radialGradient id="ogold" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#fff0a0"/><stop offset="1" stop-color="#e0a100"/></radialGradient>
-    </defs>
-    <rect x="0" y="${ground}" width="${W}" height="${H - ground}" fill="#2a2133"/>
-    <line x1="0" y1="${ground}" x2="${W}" y2="${ground}" stroke="#4a3f58"/>
-    <path d="M285 ${ground} C288 280 292 250 289 215 L311 215 C308 250 312 280 315 ${ground} Z" fill="#7a5230"/>
-    <g ${gold ? 'class="gold-glow"' : ''}>${canopy}</g>
-    ${fruit}${basket}${banner}
-  </svg>`;
-  return { svg, full, complete };
-}
-
 // ---------- Wild Card: a daily surprise aimed at the P you've neglected this week ----------
 const WILD = {
   payday: ['Pitch your idea to someone in exactly 30 seconds', 'Ask for a referral or raise a price', 'Message someone you admire about working together', 'Spend 20 focused minutes on the one task that would move your income most', 'Sell something you no longer use'],
   play: ['Do something silly in public (within reason)', 'Learn a party trick or a magic trick', 'Eat dessert first and enjoy every bite', 'Take a route you have never walked and explore', 'Invent a game using whatever is on your desk'],
-  pain: ['Hold a plank until you want to quit, then 10 seconds more', 'Go 2 hours with your phone out of reach', 'Ask for something you expect a no to', 'Write the email you have been dreading', 'End your shower with 60 seconds of cold'],
+  pain: ['Hold a plank until you want to quit, then 10 seconds more', 'Go 2 hours with your phone out of reach', 'Ask for something you expect a no to', 'Write the email you have been dreading', 'End your shower with 60 seconds of cold', 'Do 30 minutes of the hardest work first, before checking anything else', 'Walk or run until you want to stop, then add 5 more minutes', 'Skip your usual treat and sit with the craving', 'Do 5 rounds of 10 burpees with minimal rest', 'Start the thing you have been procrastinating on for a month'],
   partnership: ['Learn a stranger’s name and one thing they love', 'Call, don’t text, someone you care about', 'Thank someone who helped you years ago', 'Give a genuine compliment to three people', 'Invite someone new to coffee or a walk'],
+  passion: ['Book something exciting for the future: a trip, a show, a class', 'Do something that scares and thrills you in equal measure', 'Try an activity you have never done before', 'Message someone about a wild idea you have been sitting on', 'Spend 30 minutes on the project that lights you up', 'Say yes to the next invitation you get today', 'Plan a surprise for someone', 'Go somewhere with a view and take it in'],
   physical: ['Do 50 squats before lunch', 'Walk barefoot on grass or sand for 10 minutes', 'Hold a wall sit for 90 seconds', 'Do three sets of max pushups', 'Dance through one entire song'],
 };
 function hashStr(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -666,7 +609,7 @@ function renderHistory() {
   const notDone = win.filter(e => !isDone(e) && e.date <= today).length;
   const planned = win.filter(e => (e.planned || e.done === false) && e.date <= today), plannedDone = planned.filter(isDone).length;
   const rate = planned.length ? Math.round(plannedDone / planned.length * 100) : null;
-  const fullDays = Object.keys(m).filter(d => m[d].size === 5 && inBounds({ date: d }, bnd)).length;
+  const fullDays = Object.keys(m).filter(d => isFullSet(d, m[d]) && inBounds({ date: d }, bnd)).length;
   const upcoming = hist.range === 'custom' ? win.filter(e => e.date > today).length : state.entries.filter(e => e.date > today).length;
   const rangeText = hist.range === 'custom' && bnd.start && bnd.end
     ? (bnd.start === bnd.end ? esc(dayLabel(bnd.start)) : `${esc(dayLabel(bnd.start))} \u2013 ${esc(dayLabel(bnd.end))}`) : '';
@@ -683,8 +626,8 @@ function renderHistory() {
     const groups = {};
     list.forEach(e => (groups[e.date] ||= []).push(e));
     html = Object.keys(groups).sort().reverse().map(d => {
-      const dn = (m[d] ? m[d].size : 0), isFull = dn === 5;
-      return `<div class="hgroup"><h4 class="${isFull ? 'full' : ''}" data-date="${d}"><span>${isFull ? '🧃 ' : ''}${esc(dayLabel(d))}${d === today ? ' · today' : ''}</span><small>${dn}/5 P’s</small></h4>
+      const dn = (m[d] ? m[d].size : 0), isFull = isFullSet(d, m[d]);
+      return `<div class="hgroup"><h4 class="${isFull ? 'full' : ''}" data-date="${d}"><span>${isFull ? '🧃 ' : ''}${esc(dayLabel(d))}${d === today ? ' · today' : ''}</span><small>${dn}/${dayTotal(d)} P’s</small></h4>
         <ul class="hlist">${groups[d].map(e => itemHtml(e, today, false)).join('')}</ul></div>`;
     }).join('');
   } else if (hist.view === 'p') {
@@ -705,7 +648,7 @@ function renderHistory() {
     });
     html = '<div class="hgroup">' + Object.keys(weeks).sort().reverse().map(ws => {
       const w = weeks[ws], end = fmt(addDays(parse(ws), 6));
-      const full = Object.keys(m).filter(d => d >= ws && d <= end && m[d].size === 5).length;
+      const full = Object.keys(m).filter(d => d >= ws && d <= end && isFullSet(d, m[d])).length;
       return `<div class="weekrow"><span class="wl">${esc(dayLabel(ws))} – ${esc(dayLabel(end))}</span>
         ${PS.map(p => `<span class="pill" style="--c:${p.color}">${p.emoji} ${w.counts[p.id]}</span>`).join('')}
         <span class="hs">${full ? '🧃 ' + full + ' full' : ''}${w.notDone ? (full ? ' · ' : '') + '⏳ ' + w.notDone + ' not done' : ''}${w.upcoming ? ((full || w.notDone) ? ' · ' : '') + '📅 ' + w.upcoming + ' upcoming' : ''}</span></div>`;
@@ -785,10 +728,11 @@ function weekStats(m, ws, today) {
   const elapsed = days.filter(d => d <= today).length;
   const byP = Object.fromEntries(PS.map(p => [p.id, days.filter(d => m[d] && m[d].has(p.id)).length]));
   const slots = days.reduce((n, d) => n + countOn(m, d), 0);
-  const full = days.filter(d => countOn(m, d) === 5).length;
+  const full = days.filter(d => fullOn(m, d)).length;
+  const possible = days.filter(d => d <= today).reduce((n, d) => n + dayTotal(d), 0);
   let bestDay = null;
   days.forEach(d => { if (d <= today && countOn(m, d) > 0 && (!bestDay || countOn(m, d) >= countOn(m, bestDay))) bestDay = d; });
-  return { days, elapsed, byP, slots, full, bestDay, pct: elapsed ? Math.round(slots / (elapsed * 5) * 100) : null };
+  return { days, elapsed, byP, slots, full, bestDay, pct: elapsed ? Math.round(slots / possible * 100) : null };
 }
 function renderReview() {
   const today = todayStr(), m = hitsByDate();
@@ -807,7 +751,7 @@ function renderReview() {
   let bestHtml = '<div class="tag">Nothing logged this week yet.</div>';
   if (st.bestDay) {
     const items = state.entries.filter(e => e.date === st.bestDay && isDone(e)).slice(0, 4);
-    bestHtml = `<div class="tag">${esc(dayLabel(st.bestDay))} · ${countOn(m, st.bestDay)}/5 P’s</div>` +
+    bestHtml = `<div class="tag">${esc(dayLabel(st.bestDay))} · ${countOn(m, st.bestDay)}/${dayTotal(st.bestDay)} P’s</div>` +
       items.map(e => `<div>${PS.find(p => p.id === e.p).emoji} ${esc(e.text)}</div>`).join('');
   }
 
@@ -852,7 +796,7 @@ function renderBanner(m) {
   let msg = null, warn = false;
   if (eng.shielded.has(yest)) {
     msg = `🛡️ <b>Your shield saved your streak yesterday.</b> It’s still alive at ${eng.streak}. Squeeze today to keep it. You have ${eng.shields} shield${eng.shields === 1 ? '' : 's'} left.`;
-  } else if (hasPast && countOn(m, yest) < 5 && countOn(m, today) < 5 && eng.total > 0) {
+  } else if (hasPast && !fullOn(m, yest) && !fullOn(m, today) && eng.total > 0) {
     msg = `🍊 <b>Yesterday slipped. That’s fine.</b> The rule is never miss twice: one squeezed day today and you’re back on track.`;
     warn = true;
   }
@@ -895,6 +839,9 @@ function renderBackup() {
 // ---------- render ----------
 const $ = id => document.getElementById(id);
 const ideaIdx = {};
+// a different starting idea each day, then "another" cycles through the list
+const ideaStart = id => hashStr(todayStr() + id) % IDEAS[id].length;
+const ideaAt = id => IDEAS[id][ideaIdx[id] ?? ideaStart(id)];
 
 function render() {
   $('tab-today').hidden = tab !== 'today';
@@ -927,12 +874,13 @@ function render() {
   $('streak').textContent = st.streak; $('best').textContent = st.best; $('total').textContent = st.total; $('shields').textContent = st.shields;
   renderBanner(m); renderBackup();
 
-  $('orangeSvg').innerHTML = orangeSvg(done, planned);
+  $('orangeSvg').innerHTML = orangeSvg(done, planned, current);
   $('glassSvg').innerHTML = glassSvg(done);
-  $('scoreNum').textContent = done.size;
+  $('scoreNum').textContent = neededIds(current).filter(id => done.has(id)).length;
+  $('scoreTotal').textContent = dayTotal(current);
   const left = [...planned].filter(p => !done.has(p)).length;
   $('planNote').textContent = left ? `· ${left} planned` : '';
-  $('replay').hidden = done.size !== 5;
+  $('replay').hidden = !isFullSet(current, done);
 
   // Cards: preserve typed text across re-render
   const typed = {};
@@ -942,7 +890,7 @@ function render() {
   $('cards').innerHTML = PS.map(p => {
     const list = state.entries.filter(e => e.date === current && e.p === p.id);
     const doneN = list.filter(isDone).length, planN = list.length - doneN;
-    const idea = IDEAS[p.id][ideaIdx[p.id] ?? 0];
+    const idea = ideaAt(p.id);
     const ph = mode === 'plan' ? 'What will you do?' : 'What did you do?';
     return `<div class="pcard ${doneN ? 'done' : ''}" style="--c:${p.color}">
       <h3><span>${p.emoji} ${p.name}${planN ? `<small>${planN} planned</small>` : ''}</span><span>${doneN ? '✓' : ''}</span></h3>
@@ -959,7 +907,7 @@ function render() {
   if (focused) { const el = document.querySelector(`.pcard input[data-p="${focused}"]`); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }
 
   $('heat').innerHTML = heatSvg(m);
-  $('heatLegend').innerHTML = 'Less ' + ['var(--empty)', '#5a4a3a', '#8a5a2b', '#c27a1f', '#f09a14'].map(c => `<i style="background:${c}"></i>`).join('') + '<i style="background:linear-gradient(135deg,#ffe066,#ff9f1c)"></i> Fully squeezed <i style="background:#2f5fb3"></i> Shield used';
+  $('heatLegend').innerHTML = 'Less ' + HEAT_SHADES.map(c => `<i style="background:${c}"></i>`).join('') + '<i style="background:linear-gradient(135deg,#ffe066,#ff9f1c)"></i> Fully squeezed <i style="background:#2f5fb3"></i> Shield used';
   const r = radarSvg(m);
   $('radar').innerHTML = r.svg; $('radarNote').textContent = r.note;
   renderWild(m);
@@ -970,14 +918,6 @@ function render() {
     const wk = weekStats(m, weekStartOf(todayStr()), todayStr());
     $('hintReview').textContent = wk.pct === null ? '' : `this week: ${wk.pct}% juice level`;
   }
-  const info = monthInfo(current), o = orchardSvg(m, info);
-  $('orchard').innerHTML = o.svg;
-  $('orchardTitle').textContent = info.name;
-  $('orchardNote').textContent = `\u00b7 ${o.full} of ${info.n} oranges picked${o.complete ? ' \u00b7 every day squeezed!' : ''}`;
-  const earned = earnedMonths(m);
-  $('trophies').innerHTML = earned.length
-    ? '<span>Trophy shelf:</span>' + earned.map(i => `<button data-reward="${i.key}">\ud83c\udfc6 ${esc(i.name)}</button>`).join('')
-    : '<span>Squeeze all five P\u2019s every day of a month to earn a golden tree and a trophy.</span>';
 }
 function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
@@ -1012,7 +952,7 @@ const WISDOM = [
 ];
 let lastWise = -1;
 
-// ---------- sound: a five-note juice melody, one note per P ----------
+// ---------- sound: a juice melody, one note per P ----------
 let audioCtx = null, master = null;
 let soundOn = true;
 try { soundOn = localStorage.getItem('fivePs.sound') !== 'off'; } catch (e) {}
@@ -1040,16 +980,17 @@ function squish(start) {
   g.gain.setValueAtTime(0.09, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
   src.connect(f); f.connect(g); g.connect(master); src.start(t0);
 }
-function playJuiceSound(gold, reward) {
+const SQ_T0 = 0.3, SQ_STEP = 0.85, SQ_END = SQ_T0 + PS.length * SQ_STEP; // one squeeze per P, then the finale
+function playJuiceSound(gold) {
   stopSound();
   if (!soundOn) return;
   const c = ac(); if (!c) return;
   master = c.createGain(); master.gain.value = 1; master.connect(c.destination);
-  const notes = [261.63, 293.66, 329.63, 392.0, 440.0]; // C D E G A
-  notes.forEach((f, i) => { squish(0.3 + i * 0.85 + 0.15); tone(f, 0.3 + i * 0.85 + 0.35, 0.9, 'triangle', 0.08); });
-  [523.25, 659.25, 783.99, 1046.5].forEach(f => tone(f, 4.95, 2.2, 'sine', 0.05)); // final chord
-  if (gold || reward) [1318.5, 1568, 1760, 2093].forEach((f, i) => tone(f, 5.1 + i * 0.12, 0.8, 'sine', 0.03));
-  if (reward) [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(f, 5.9 + i * 0.18, 1.4, 'triangle', 0.05));
+  const notes = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25]; // C D E G A C: one note per P
+  notes.forEach((f, i) => { squish(SQ_T0 + i * SQ_STEP + 0.15); tone(f, SQ_T0 + i * SQ_STEP + 0.35, 0.9, 'triangle', 0.08); });
+  const fin = SQ_END + 0.4;
+  [523.25, 659.25, 783.99, 1046.5].forEach(f => tone(f, fin, 2.2, 'sine', 0.05)); // final chord
+  if (gold) [1318.5, 1568, 1760, 2093].forEach((f, i) => tone(f, fin + 0.15 + i * 0.12, 0.8, 'sine', 0.03));
 }
 function setSound(on) {
   soundOn = on;
@@ -1061,9 +1002,9 @@ function setSound(on) {
 
 // ---------- scene: two hands squeezing a cut orange into a glass ----------
 function squeezeScene(gold) {
-  const cx = 150, cy = 118, R = 44, pith = 38, inner = 34, T0 = 0.3, STEP = 0.85;
+  const cx = 150, cy = 118, R = 44, pith = 38, inner = 34, T0 = SQ_T0, STEP = SQ_STEP, LH = 96 / PS.length;
   const wedge = i => {
-    const a0 = (-90 + i * 72) * Math.PI / 180, a1 = (-90 + (i + 1) * 72) * Math.PI / 180;
+    const a0 = (-90 + i * SEG) * Math.PI / 180, a1 = (-90 + (i + 1) * SEG) * Math.PI / 180;
     const p = a => `${(cx + inner * Math.cos(a)).toFixed(1)},${(cy + inner * Math.sin(a)).toFixed(1)}`;
     return `M${cx},${cy} L${p(a0)} A${inner},${inner} 0 0 1 ${p(a1)} Z`;
   };
@@ -1073,11 +1014,11 @@ function squeezeScene(gold) {
   const wedges = PS.map((p, i) =>
     `<path d="${wedge(i)}" fill="${p.color}" stroke="#fff3d6" stroke-width="2.5" style="animation: drain .5s ease forwards ${(T0 + i * STEP + 0.45).toFixed(2)}s"/>`).join('');
   const streams = PS.map((p, i) =>
-    `<rect class="stream" x="147.5" y="160" width="5" height="${332 - i * 18 - 160}" rx="2.5" fill="${p.color}" style="animation: streamk ${STEP}s linear ${t(i)}s forwards"/>`).join('');
+    `<rect class="stream" x="147.5" y="160" width="5" height="${332 - i * LH - 160}" rx="2.5" fill="${p.color}" style="animation: streamk ${STEP}s linear ${t(i)}s forwards"/>`).join('');
   const ripples = PS.map((p, i) =>
-    `<ellipse class="ripple" cx="150" cy="${332 - i * 18}" rx="3" ry="1" fill="none" stroke="#fff" stroke-width="1" style="animation: rip .7s ease-out ${(T0 + i * STEP + 0.4).toFixed(2)}s forwards"/>`).join('');
+    `<ellipse class="ripple" cx="150" cy="${332 - i * LH}" rx="3" ry="1" fill="none" stroke="#fff" stroke-width="1" style="animation: rip .7s ease-out ${(T0 + i * STEP + 0.4).toFixed(2)}s forwards"/>`).join('');
   const layers = PS.map((p, i) => {
-    const h = 18, y = 332 - (i + 1) * h;
+    const h = LH, y = 332 - (i + 1) * h;
     return `<rect class="fill" x="90" y="${y}" width="120" height="${h + 1}" fill="${p.color}" style="animation: fillk .55s ease-out ${(T0 + i * STEP + 0.3).toFixed(2)}s forwards"/>`;
   }).join('');
   // each hand: a cuff and palm behind the orange, four fingertips curled over the near rim
@@ -1130,38 +1071,20 @@ function squeezeScene(gold) {
 }
 
 
-// opts.reward = 'YYYY-MM' shows the month-complete reward. opts.instant skips the squeeze and shows the golden tree.
-function celebrate(opts = {}) {
+function celebrate() {
   const root = $('celebrate');
-  const reward = opts.reward ? monthInfo(opts.reward + '-01') : null;
-  const gold = !!reward || Math.random() < 1 / 8; // 1-in-8 rare golden squeeze
-
-  const scene = $('celeScene');
-  if (reward && opts.instant) {
-    scene.className = 'tree';
-    scene.innerHTML = orchardSvg(hitsByDate(), reward, { gold: true }).svg;
-  } else {
-    scene.className = '';
-    scene.innerHTML = squeezeScene(gold);
-  }
-  root.classList.toggle('instant', !!(reward && opts.instant));
+  const gold = Math.random() < 1 / 8; // 1-in-8 rare golden squeeze
+  $('celeScene').innerHTML = squeezeScene(gold);
+  root.querySelector('h2').textContent = 'FULLY SQUEEZED';
 
   const wise = $('wise'), rare = $('rare');
-  if (reward) {
-    $('celebrate').querySelector('h2').textContent = 'LIVING LIFE TO THE FULLEST';
-    rare.hidden = false;
-    rare.textContent = `🏆 ${reward.name.toUpperCase()} · EVERY DAY SQUEEZED 🏆`;
-    wise.innerHTML = `“You are living your life to the fullest.”<small>${reward.n} days · ${reward.n * 5} P’s · not a drop wasted</small>`;
-  } else {
-    $('celebrate').querySelector('h2').textContent = 'FULLY SQUEEZED';
-    let w; do { w = Math.floor(Math.random() * WISDOM.length); } while (w === lastWise && WISDOM.length > 1);
-    lastWise = w;
-    wise.innerHTML = `“${esc(WISDOM[w][0])}”` + (WISDOM[w][1] ? `<small>— ${esc(WISDOM[w][1])}</small>` : '');
-    rare.hidden = !gold;
-    rare.textContent = gold ? '✨ RARE GOLDEN SQUEEZE · 1 IN 8 ✨' : '';
-  }
+  let w; do { w = Math.floor(Math.random() * WISDOM.length); } while (w === lastWise && WISDOM.length > 1);
+  lastWise = w;
+  wise.innerHTML = `“${esc(WISDOM[w][0])}”` + (WISDOM[w][1] ? `<small>— ${esc(WISDOM[w][1])}</small>` : '');
+  rare.hidden = !gold;
+  rare.textContent = gold ? '✨ RARE GOLDEN SQUEEZE · 1 IN 8 ✨' : '';
 
-  const base = reward && opts.instant ? 0.2 : 4.6;
+  const base = SQ_END + 0.05;
   const drops = $('drops');
   drops.innerHTML = '';
   const cols = gold ? ['#ffe066', '#ffd23f', '#ff9f1c', '#fff3d6', '#ffb703'] : PS.map(p => p.color);
@@ -1180,32 +1103,24 @@ function celebrate(opts = {}) {
   root.classList.add('show');
   $('muteCele').hidden = false;
   root.scrollTop = 0;
-  if (reward && opts.instant) { stopSound(); if (soundOn && ac()) { master = audioCtx.createGain(); master.connect(audioCtx.destination); [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => tone(f, 0.2 + i * 0.18, 1.6, 'triangle', 0.05)); } }
-  else playJuiceSound(gold, !!reward);
+  playJuiceSound(gold);
 }
 function closeCelebration() { $('celebrate').classList.remove('show'); $('muteCele').hidden = true; stopSound(); }
 
 // ---------- events ----------
-function doneCount() { return (hitsByDate()[current] || new Set()).size; }
-// finishing the last day of a month where every day is squeezed earns the month reward
-function rewardOpts() {
-  const info = monthInfo(current);
-  return monthFull(hitsByDate(), info) === info.n ? { reward: info.key } : {};
-}
-
 document.addEventListener('submit', ev => {
   const f = ev.target.closest('form[data-p]'); if (!f) return;
   ev.preventDefault();
   const input = f.querySelector('input'), text = input.value.trim();
   if (!text) return;
-  const before = doneCount();
+  const before = dayFull(current);
   state.entries.push({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     date: current, p: f.dataset.p, text, done: getMode() === 'done', planned: getMode() === 'plan',
   });
   input.value = '';
   save(); render();
-  if (before < 5 && doneCount() === 5) celebrate(rewardOpts());
+  if (!before && dayFull(current)) celebrate();
 });
 document.addEventListener('click', ev => {
   const t = ev.target;
@@ -1214,10 +1129,10 @@ document.addEventListener('click', ev => {
     if (gone && gone.wild && state.wild[gone.date]) state.wild[gone.date].done = false; // let the card be played again
     state.entries = state.entries.filter(e => e.id !== t.dataset.del); save(); render(); return;
   }
-  if (t.dataset.idea) { const id = t.dataset.idea; ideaIdx[id] = ((ideaIdx[id] ?? 0) + 1) % IDEAS[id].length; render(); return; }
+  if (t.dataset.idea) { const id = t.dataset.idea; ideaIdx[id] = ((ideaIdx[id] ?? ideaStart(id)) + 1) % IDEAS[id].length; render(); return; }
   if (t.dataset.use) {
     const id = t.dataset.use, input = document.querySelector(`.pcard input[data-p="${id}"]`);
-    input.value = IDEAS[id][ideaIdx[id] ?? 0]; input.focus(); return;
+    input.value = ideaAt(id); input.focus(); return;
   }
   if (t.dataset.tab) { setTab(t.dataset.tab); return; }
   if (t.dataset.hrange) {
@@ -1240,10 +1155,10 @@ document.addEventListener('click', ev => {
   if (t.dataset.oracle) { consultOracle(); return; }
   if (t.dataset.hdone || t.dataset.hmove) {
     const e = state.entries.find(x => x.id === (t.dataset.hdone || t.dataset.hmove)); if (!e) return;
-    const dateWas = e.date, before = (hitsByDate()[dateWas] || new Set()).size;
+    const dateWas = e.date, before = dayFull(dateWas);
     if (t.dataset.hdone) e.done = true; else { e.date = todayStr(); e.planned = true; }
     save(); render();
-    if (t.dataset.hdone && dateWas === todayStr() && before < 5 && (hitsByDate()[dateWas] || new Set()).size === 5) celebrate();
+    if (t.dataset.hdone && dateWas === todayStr() && !before && dayFull(dateWas)) celebrate();
     return;
   }
   if (t.dataset.mode) { modeOverride = t.dataset.mode; render(); return; }
@@ -1251,23 +1166,22 @@ document.addEventListener('click', ev => {
   if (t.dataset.wilddo) {
     const w = state.wild[todayStr()];
     if (w && !w.done && current === todayStr()) {
-      const before = doneCount();
+      const before = dayFull(current);
       state.entries.push({ id: Date.now().toString(36) + 'w', date: current, p: w.p, text: '\ud83c\udccf ' + w.text, done: true, wild: true });
       w.done = true; save(); render();
-      if (before < 5 && doneCount() === 5) celebrate(rewardOpts());
+      if (!before && dayFull(current)) celebrate();
     }
     return;
   }
-  if (t.dataset.reward) { celebrate({ reward: t.dataset.reward, instant: true }); return; }
   const dd = t.closest && t.closest('[data-date]');
   if (dd) { tab = 'today'; try { localStorage.setItem('fivePs.tab', 'today'); } catch (e) {} goTo(dd.dataset.date); window.scrollTo(0, 0); return; }
   const li = t.closest && t.closest('li[data-toggle]');
   if (li && current <= todayStr()) {
     const e = state.entries.find(x => x.id === li.dataset.toggle); if (!e) return;
-    const before = doneCount();
+    const before = dayFull(current);
     e.done = !isDone(e);
     save(); render();
-    if (before < 5 && doneCount() === 5) celebrate(rewardOpts());
+    if (!before && dayFull(current)) celebrate();
   }
 });
 document.addEventListener('input', ev => {
@@ -1282,7 +1196,7 @@ document.addEventListener('change', ev => {
 $('prev').onclick = () => goTo(fmt(addDays(parse(current), -1)));
 $('next').onclick = () => { if (!$('next').disabled) goTo(fmt(addDays(parse(current), 1))); };
 $('today').onclick = () => goTo(todayStr());
-$('replay').onclick = () => celebrate(rewardOpts());
+$('replay').onclick = () => celebrate();
 $('closeCele').onclick = closeCelebration;
 $('celebrate').addEventListener('click', e => { if (e.target.id === 'celebrate') closeCelebration(); });
 $('sound').onclick = () => setSound(!soundOn);
@@ -1308,7 +1222,7 @@ $('file').onchange = async e => {
     const clean = sanitize(data), skipped = data.entries.length - clean.entries.length;
     if (!clean.entries.length && data.entries.length) throw 0;
     if (confirm(`Replace current data with ${clean.entries.length} entries from this backup?` + (skipped ? `\n(${skipped} damaged entr${skipped === 1 ? 'y' : 'ies'} will be skipped.)` : ''))) { lsSet(UNDO_KEY, JSON.stringify(state)); state = clean; save(); render(); }
-  } catch (err) { alert('That file is not a valid 5 P\'s backup.'); }
+  } catch (err) { alert('That file is not a valid P\'s backup.'); }
   e.target.value = '';
 };
 
@@ -1367,12 +1281,12 @@ async function maybeRemind() {
   const rec = await idbGet().catch(() => null);
   if (remind.last === today || (rec && rec.last === today)) return;
   const done = hitsByDate()[today] || new Set();
-  if (done.size === 5) return;
+  if (dayFull(today)) return;
   const left = PS.filter(p => !done.has(p.id)).map(p => `${p.emoji} ${p.name}`);
   remind.last = today; await saveRemind();
   const reg = await navigator.serviceWorker.ready;
   reg.showNotification('🍊 Squeeze the juice', {
-    body: done.size ? `${done.size} of 5 P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. Five quick wins and the day is yours.',
+    body: (done.size ? `${done.size} of ${PS.length} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.'),
     tag: 'daily-reminder', icon: 'icon-192.png', badge: 'favicon-32.png',
   });
 }
@@ -1424,6 +1338,7 @@ $('install').onclick = async () => {
 };
 updateInstall();
 
+document.documentElement.style.setProperty('--sq-n', PS.length);
 setSound(soundOn);
 render();
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}

@@ -1,7 +1,7 @@
 {
-  "name": "The 5 P's – Squeeze the Juice",
-  "short_name": "5 P's",
-  "description": "Payday, Play, Pain, Partnership, Physical. Squeeze every drop out of your day.",
+  "name": "The 6 P's – Squeeze the Juice",
+  "short_name": "6 P's",
+  "description": "Payday, Play, Pain, Partnership, Physical, Passion. Squeeze every drop out of your day.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

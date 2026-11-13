@@ -45,7 +45,7 @@ const DAY = '2026-03-03';
   await page.evaluate(() => maybeRemind());
   let n = await notes(page);
   check('fires once after the reminder time', n.length === 1, JSON.stringify(n));
-  check('message shows progress and what is missing', n[0] && /2 of 5/.test(n[0].o.body) && /Payday/.test(n[0].o.body) && !/Play/.test(n[0].o.body), n[0] && n[0].o.body);
+  check('message shows progress and what is missing', n[0] && /2 of 6/.test(n[0].o.body) && /Payday/.test(n[0].o.body) && !/Play/.test(n[0].o.body), n[0] && n[0].o.body);
   await page.evaluate(() => maybeRemind());
   check('does not fire a second time the same day', (await notes(page)).length === 1);
   await page.evaluate(async () => { remind.last = ''; await maybeRemind(); });
@@ -61,9 +61,9 @@ const DAY = '2026-03-03';
 
   // everything already done
   ({ ctx, page } = await open());
-  await enable(page); await logDone(page, ['payday', 'play', 'pain', 'partnership', 'physical']);
+  await enable(page); await logDone(page, ['payday', 'play', 'pain', 'partnership', 'physical', 'passion']);
   await page.evaluate(() => maybeRemind());
-  check('all five done: no reminder', (await notes(page)).length === 0);
+  check('all six done: no reminder', (await notes(page)).length === 0);
   await ctx.close();
 
   // looking at the app

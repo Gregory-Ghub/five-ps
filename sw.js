@@ -1,5 +1,5 @@
 // Bump CACHE when you want to force-refresh the precached files.
-const CACHE = 'five-ps-v7';
+const CACHE = 'five-ps-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -47,7 +47,7 @@ self.addEventListener('fetch', (e) => {
 
 // ---------- daily reminder (Periodic Background Sync, best effort) ----------
 // The page mirrors settings + today's progress into IndexedDB because the worker can't read localStorage.
-const PS_NAMES = { payday: '💰 Payday', play: '🎮 Play', pain: '🔥 Pain', partnership: '🤝 Partnership', physical: '💪 Physical' };
+const PS_NAMES = { payday: '💰 Payday', play: '🎮 Play', pain: '🔥 Pain', partnership: '🤝 Partnership', physical: '💪 Physical', passion: '🎢 Passion' };
 const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 function reminderDue(rec, now) {
@@ -57,14 +57,15 @@ function reminderDue(rec, now) {
   const [h, m] = String(rec.time || '20:00').split(':').map(Number);
   if (now.getHours() * 60 + now.getMinutes() < h * 60 + m) return false;
   const done = rec.date === today ? rec.done : []; // a record from an earlier day means nothing is done today
-  return done.length < 5;
+  return done.length < Object.keys(PS_NAMES).length;
 }
 function reminderText(rec, now) {
   const done = rec.date === ymd(now) ? rec.done : [];
+  const total = Object.keys(PS_NAMES).length;
   const left = Object.keys(PS_NAMES).filter(id => !done.includes(id)).map(id => PS_NAMES[id]);
   return {
     title: '🍊 Squeeze the juice',
-    body: done.length ? `${done.length} of 5 P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. Five quick wins and the day is yours.',
+    body: (done.length ? `${done.length} of ${total} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.'),
   };
 }
 

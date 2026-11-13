@@ -16,7 +16,7 @@ const { check, done } = makeChecker();
     await p.reload();
     check(`${day}: survives reload`, (await p.locator('#wild .wt').innerText()) === face);
     await p.click('[data-tab="progress"]');
-    check(`${day}: progress tab renders (orchard drawn)`, (await p.locator('#orchard svg').count()) === 1);
+    check(`${day}: progress tab renders (calendar drawn)`, (await p.locator('#heat svg').count()) === 1);
     await p.click('[data-tab="today"]');
     await p.click('[data-wilddo]');
     const n1 = await p.evaluate(() => state.entries.length);

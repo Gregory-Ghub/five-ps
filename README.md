@@ -1,6 +1,6 @@
-# The 5 P's – Squeeze the Juice
+# The 6 P's – Squeeze the Juice
 
-A daily habit tracker built around five categories. Do at least one thing in each, every day, and you've **fully squeezed** the day.
+A daily habit tracker built around six categories. Do at least one thing in each, every day, and you've **fully squeezed** the day.
 
 | | P | Meaning |
 |---|---|---|
@@ -9,6 +9,9 @@ A daily habit tracker built around five categories. Do at least one thing in eac
 | 🔥 | **Pain** | Something hard you did on purpose |
 | 🤝 | **Partnership** | Network, or turn a stranger into a friend |
 | 💪 | **Physical** | Exercise for your health |
+| 🎢 | **Passion** | Something that adds excitement to your day |
+
+**Upgrading from five P's:** days before Passion was added still count as fully squeezed with the original five, so your streak and calendar are untouched. From the first day you open the new version, a full day needs all six.
 
 It's a single static page with no build step, no dependencies and no account. It works offline and installs like an app.
 
@@ -16,12 +19,12 @@ It's a single static page with no build step, no dependencies and no account. It
 
 **Daily tracking**
 - Log what you did under each P, or **plan** tasks up to 30 days ahead and tick them off on the day.
-- An orange fills in one segment per P, and a juice glass fills alongside it. All five triggers a squeeze celebration with sound and a quote.
+- Each P has a pool of 12–28 example tasks (Pain has the most), with a different suggestion each day and an "another" link to cycle.
+- An orange fills in one segment per P, and a juice glass fills alongside it. All six triggers a squeeze celebration with sound and a quote.
 
 **Streaks and motivation**
 - **Streak shields:** every 7 fully squeezed days in a row earns a shield (max 2). A missed day spends a shield instead of resetting your streak ("never miss twice").
 - **Heatmap** of the last 26 weeks, and a **weekly balance radar** that points out your most neglected P.
-- **Orchard:** one tree per month with an orange per day. Squeeze every day of a month for a golden tree and a trophy.
 - **Wild Card:** a daily surprise challenge aimed at the P you've neglected most this week.
 - **Juice Oracle:** random facts about you, drawn from your own data.
 
@@ -37,7 +40,7 @@ It's a single static page with no build step, no dependencies and no account. It
 **App behavior**
 - Installable (PWA) with an **Install app** button. On iPhone it shows the Share → Add to Home Screen steps.
 - Works offline through a service worker.
-- **Daily reminder:** tap **🔔 Daily reminder** in the footer, allow notifications and pick a time (default 20:00). If you haven't squeezed all five P's by then, you get a nudge listing what's left. It never fires while you're looking at the app, at most once a day, and not at all if you're done. See [Reminder limits](#reminder-limits).
+- **Daily reminder:** tap **🔔 Daily reminder** in the footer, allow notifications and pick a time (default 20:00). If you haven't squeezed all six P's by then, you get a nudge listing what's left. It never fires while you're looking at the app, at most once a day, and not at all if you're done. See [Reminder limits](#reminder-limits).
 
 ## Reminder limits
 
@@ -73,11 +76,11 @@ tests/                browser tests (see tests/README.md)
 
 ## Updating the app
 
-The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v7` → `five-ps-v8`) in the same commit.
+The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v8` → `five-ps-v9`) in the same commit.
 
 ## Tests
 
-End-to-end tests drive the real app in headless Chromium (about 15 seconds, 98 checks):
+End-to-end tests drive the real app in headless Chromium (about 25 seconds, 126 checks):
 
 ```
 cd tests
@@ -86,7 +89,7 @@ npx playwright-core install chromium   # once
 npm test
 ```
 
-They cover saved data surviving a load, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
+They cover saved data surviving a load, the sixth P and migrating old data, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
 
 ## Data and privacy
 
