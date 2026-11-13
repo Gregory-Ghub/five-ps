@@ -217,6 +217,7 @@
 
   <div id="tab-today">
   <div class="banner" id="banner" hidden></div>
+  <div class="banner warn" id="backupBanner" hidden></div>
   <div class="datebar">
     <button id="prev" title="Previous day">◀</button>
     <div class="date" id="dateLabel"></div>
@@ -303,6 +304,8 @@
     <button id="export">⬇ Export backup</button>
     <button id="import">⬆ Import backup</button>
     <input type="file" id="file" accept="application/json" hidden>
+    <button id="undoImport" hidden>↩ Undo last import</button>
+    <span class="tag" id="backupInfo"></span>
   </footer>
 </div>
 
@@ -854,6 +857,37 @@ function renderBanner(m) {
   el.innerHTML = `<span>${msg}</span><button data-bannerclose="1" title="Dismiss">✕</button>`;
 }
 
+// ---------- backups: data lives only in this browser, so nudge the user to export ----------
+const BACKUP_KEY = 'fivePs.lastBackup', SNOOZE_KEY = 'fivePs.backupSnooze', UNDO_KEY = 'fivePs.undo';
+const BACKUP_EVERY = 7;      // days between reminders
+const BACKUP_AFTER_DAYS = 3; // days with wins before the first reminder
+const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+const daysBetween = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+
+function exportBackup() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }));
+  a.download = `five-ps-backup-${todayStr()}.json`; a.click();
+  lsSet(BACKUP_KEY, todayStr());
+  render();
+}
+function backupDue() {
+  const today = todayStr(), last = lsGet(BACKUP_KEY);
+  if (!state.entries.length || lsGet(SNOOZE_KEY) === today) return null;
+  if (last) return daysBetween(last, today) >= BACKUP_EVERY ? { never: false, days: daysBetween(last, today) } : null;
+  return new Set(state.entries.filter(isDone).map(e => e.date)).size >= BACKUP_AFTER_DAYS ? { never: true } : null;
+}
+function renderBackup() {
+  const el = $('backupBanner'), due = backupDue(), last = lsGet(BACKUP_KEY);
+  $('backupInfo').textContent = last ? `Last backup: ${last === todayStr() ? 'today' : dayLabel(last)}` : 'Not backed up yet';
+  $('undoImport').hidden = !lsGet(UNDO_KEY);
+  if (!due) { el.hidden = true; return; }
+  el.hidden = false;
+  el.innerHTML = `<span>💾 <b>${due.never ? 'Back up your progress.' : `It’s been ${due.days} days since your last backup.`}</b> Your data lives only in this browser, so clearing site data would erase it.
+    <button data-backupnow="1">⬇ Back up now</button></span><button data-backupclose="1" title="Remind me tomorrow">✕</button>`;
+}
+
 // ---------- render ----------
 const $ = id => document.getElementById(id);
 const ideaIdx = {};
@@ -887,7 +921,7 @@ function render() {
 
   const st = stats(m);
   $('streak').textContent = st.streak; $('best').textContent = st.best; $('total').textContent = st.total; $('shields').textContent = st.shields;
-  renderBanner(m);
+  renderBanner(m); renderBackup();
 
   $('orangeSvg').innerHTML = orangeSvg(done, planned);
   $('glassSvg').innerHTML = glassSvg(done);
@@ -1191,6 +1225,8 @@ document.addEventListener('click', ev => {
   if (t.dataset.hview) { hist.view = t.dataset.hview; render(); return; }
   if (t.dataset.bannerclose) { try { localStorage.setItem('fivePs.banner', todayStr()); } catch (e) {} $('banner').hidden = true; return; }
   if (t.dataset.csv) { downloadCsv(); return; }
+  if (t.dataset.backupnow) { exportBackup(); return; }
+  if (t.dataset.backupclose) { lsSet(SNOOZE_KEY, todayStr()); renderBackup(); return; }
   if ('rv' in t.dataset) { reviewOffset = t.dataset.rv === '0' ? 0 : Math.min(1, Math.max(-104, reviewOffset + Number(t.dataset.rv))); render(); return; }
   if (t.dataset.rvkept) {
     const ws = fmt(addDays(parse(weekStartOf(todayStr())), reviewOffset * 7));
@@ -1248,12 +1284,18 @@ $('celebrate').addEventListener('click', e => { if (e.target.id === 'celebrate')
 $('sound').onclick = () => setSound(!soundOn);
 $('muteCele').onclick = () => setSound(!soundOn);
 
-$('export').onclick = () => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }));
-  a.download = `five-ps-backup-${todayStr()}.json`; a.click();
-};
+$('export').onclick = exportBackup;
 $('import').onclick = () => $('file').click();
+$('undoImport').onclick = () => {
+  try {
+    const prev = JSON.parse(lsGet(UNDO_KEY));
+    if (!prev || !Array.isArray(prev.entries)) throw 0;
+    if (!confirm(`Restore the ${prev.entries.length} entries you had before the last import? This replaces what you have now.`)) return;
+    state = sanitize(prev); save();
+    try { localStorage.removeItem(UNDO_KEY); } catch (e) {}
+    render();
+  } catch (err) { alert('Nothing to restore.'); }
+};
 $('file').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try {
@@ -1261,7 +1303,7 @@ $('file').onchange = async e => {
     if (!data || !Array.isArray(data.entries)) throw 0;
     const clean = sanitize(data), skipped = data.entries.length - clean.entries.length;
     if (!clean.entries.length && data.entries.length) throw 0;
-    if (confirm(`Replace current data with ${clean.entries.length} entries from this backup?` + (skipped ? `\n(${skipped} damaged entr${skipped === 1 ? 'y' : 'ies'} will be skipped.)` : ''))) { state = clean; save(); render(); }
+    if (confirm(`Replace current data with ${clean.entries.length} entries from this backup?` + (skipped ? `\n(${skipped} damaged entr${skipped === 1 ? 'y' : 'ies'} will be skipped.)` : ''))) { lsSet(UNDO_KEY, JSON.stringify(state)); state = clean; save(); render(); }
   } catch (err) { alert('That file is not a valid 5 P\'s backup.'); }
   e.target.value = '';
 };
@@ -1283,6 +1325,7 @@ document.addEventListener('toggle', ev => {
 
 setSound(soundOn);
 render();
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
