@@ -32,4 +32,14 @@ check('text when nothing done', /Nothing squeezed/.test(t.body), t.body);
 t = reminderText(rec({ date: '2026-03-02', done: ['payday'] }), at(21));
 check('stale record reads as nothing done', /Nothing squeezed/.test(t.body), t.body);
 
+// neglect line: names the P that has been quiet longest, only at 3+ days
+const { neglectLine } = sandbox.module.exports;
+const withLast = last => rec({ lastDone: Object.assign({ payday: '2026-03-03', play: '2026-03-03', pain: '2026-03-03', partnership: '2026-03-03', physical: '2026-03-03', passion: '2026-03-03' }, last) });
+check('neglect: nothing quiet -> no line', neglectLine(withLast({}), at(21)) === '');
+check('neglect: 2 days is not enough', neglectLine(withLast({ pain: '2026-03-01' }), at(21)) === '');
+check('neglect: 3 days triggers', /Pain has been quiet for 3 days/.test(neglectLine(withLast({ pain: '2026-02-28' }), at(21))), neglectLine(withLast({ pain: '2026-02-28' }), at(21)));
+check('neglect: picks the longest-quiet P', /Physical has been quiet for 9 days/.test(neglectLine(withLast({ pain: '2026-02-28', physical: '2026-02-22' }), at(21))));
+check('neglect: record without lastDone is safe', neglectLine(rec(), at(21)) === '');
+check('neglect line is appended to the reminder text', /Passion has been quiet for 5 days/.test(reminderText(withLast({ passion: '2026-02-26' }), at(21)).body));
+
 console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

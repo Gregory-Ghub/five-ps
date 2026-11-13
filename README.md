@@ -26,6 +26,10 @@ It's a single static page with no build step, no dependencies and no account. It
 - Everything you planned on an earlier day and never did collects in a **📋 To-do** card at the top of the Today tab, oldest first.
 - Add an item to tomorrow's plan (or to whichever future day you're viewing), add them all at once, log one as **done today**, or remove it. Adding *copies* the task, so history still shows the original as planned-but-missed.
 
+**Nudges**
+- When a P has gone quiet for **3 days**, a banner encourages you, names the P, and offers an idea you can drop into its input with one tap. Dismiss it to hide it until tomorrow.
+- The daily reminder notification also names the P that has been quiet longest.
+
 **Streaks and motivation**
 - **Streak shields:** every 7 fully squeezed days in a row earns a shield (max 2). A missed day spends a shield instead of resetting your streak ("never miss twice").
 - **Heatmap** of the last 26 weeks, and a **weekly balance radar** that points out your most neglected P.
@@ -44,7 +48,7 @@ It's a single static page with no build step, no dependencies and no account. It
 **App behavior**
 - Installable (PWA) with an **Install app** button. On iPhone it shows the Share → Add to Home Screen steps.
 - Works offline through a service worker.
-- **Daily reminder:** tap **🔔 Daily reminder** in the footer, allow notifications and pick a time (default 20:00). If you haven't squeezed all six P's by then, you get a nudge listing what's left. It never fires while you're looking at the app, at most once a day, and not at all if you're done. See [Reminder limits](#reminder-limits).
+- **Daily reminder:** tap **🔔 Daily reminder** in the footer, allow notifications and pick a time (default 20:00). If you haven't squeezed all six P's by then, you get a nudge listing what's left (and which P has been quiet longest). It never fires while you're looking at the app, at most once a day, and not at all if you're done. See [Reminder limits](#reminder-limits).
 
 ## Reminder limits
 
@@ -84,7 +88,7 @@ The service worker serves cached files first and refreshes them in the backgroun
 
 ## Tests
 
-End-to-end tests drive the real app in headless Chromium (about 25 seconds, 151 checks):
+End-to-end tests drive the real app in headless Chromium (about 25 seconds, 177 checks):
 
 ```
 cd tests
@@ -93,7 +97,7 @@ npx playwright-core install chromium   # once
 npm test
 ```
 
-They cover saved data surviving a load, the sixth P and migrating old data, the to-do list, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
+They cover saved data surviving a load, the sixth P and migrating old data, the to-do list, the nudges, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
 
 ## Data and privacy
 

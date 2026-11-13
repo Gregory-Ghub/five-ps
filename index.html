@@ -118,6 +118,10 @@
   .banner { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-top: 14px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(120deg, #1d2b4a, #231d2b); animation: fadeup .6s ease both; }
   .banner.warn { background: linear-gradient(120deg, #4a2f1d, #231d2b); }
   .banner button { background: none; border: none; color: var(--muted); padding: 0 4px; }
+  .banner.nudge { background: linear-gradient(120deg, #3b1f52, #231d2b); }
+  .banner.nudge small { color: var(--muted); }
+  /* action buttons inside a banner must look like buttons (the generic .banner button style is for the ✕) */
+  .banner button[data-nudgeuse], .banner button[data-backupnow] { background: var(--card2); border: 1px solid var(--line); color: var(--text); padding: 4px 10px; border-radius: 8px; margin-left: 6px; font-weight: 600; }
   #todo h2 small { color: var(--muted); font-weight: 400; }
   .todohead { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
   .todonote { color: #ffe066; margin-top: 8px; }
@@ -216,6 +220,7 @@
   <div id="tab-today">
   <div class="banner" id="banner" hidden></div>
   <div class="banner warn" id="backupBanner" hidden></div>
+  <div class="banner nudge" id="nudge" hidden></div>
   <div class="datebar">
     <button id="prev" title="Previous day">◀</button>
     <div class="date" id="dateLabel"></div>
@@ -918,7 +923,7 @@ function render() {
   const r = radarSvg(m);
   $('radar').innerHTML = r.svg; $('radarNote').textContent = r.note;
   renderWild(m);
-  renderTodo();
+  renderTodo(); renderNudge();
   if (tab === 'progress') {
     renderHistory(); renderReview();
     const win = windowEntries(), missed = win.filter(e => !isDone(e) && e.date <= todayStr()).length;
@@ -1153,6 +1158,14 @@ document.addEventListener('click', ev => {
   if (t.dataset.bannerclose) { try { localStorage.setItem('fivePs.banner', todayStr()); } catch (e) {} $('banner').hidden = true; return; }
   if (t.dataset.csv) { downloadCsv(); return; }
   if (todoClick(t)) return;
+  if (t.dataset.nudgeclose) { lsSet('fivePs.nudge', todayStr()); renderNudge(); return; }
+  if (t.dataset.nudgeuse) {
+    const id = t.dataset.nudgeuse;
+    tab = 'today'; current = todayStr(); modeOverride = null; render(); window.scrollTo(0, 0);
+    const input = document.querySelector(`.pcard input[data-p="${id}"]`);
+    if (input) { input.value = ideaAt(id); input.scrollIntoView({ block: 'center' }); input.focus(); }
+    return;
+  }
   if (t.dataset.backupnow) { exportBackup(); return; }
   if (t.dataset.backupclose) { lsSet(SNOOZE_KEY, todayStr()); renderBackup(); return; }
   if ('rv' in t.dataset) { reviewOffset = t.dataset.rv === '0' ? 0 : Math.min(1, Math.max(-104, reviewOffset + Number(t.dataset.rv))); render(); return; }
@@ -1320,6 +1333,40 @@ function todoClick(t) {
   return false;
 }
 
+// ---------- nudges: encouragement when a P has gone quiet ----------
+const NUDGE_DAYS = 3;
+const NUDGE_MSG = {
+  payday:      ['Even one outreach message today puts money back in motion.', 'Income grows from small, repeated asks. Make one today.'],
+  play:        ['Fun is fuel, not a reward. Give yourself ten minutes of it.', 'Play makes the hard days easier. Go enjoy something.'],
+  pain:        ['Hard on purpose is how you get stronger. Pick something small and do it now.', 'Discomfort is where the growth is. One brave, hard thing today.'],
+  partnership: ['Your people are your upside. Reach out to one today.', 'A single message can restart a friendship or a deal. Send it.'],
+  physical:    ['Your body keeps the score. Even a 10-minute walk counts.', 'Move today. Future you will be glad you did.'],
+  passion:     ['Your day needs a spark. Do one thing that gets your heart going.', 'Excitement is a choice. Add a little today.'],
+};
+// days since each P was last done. A P never done is measured from when you started (or from when Passion was added).
+function gapInfo() {
+  const today = todayStr(), last = {};
+  const first = state.entries.reduce((a, e) => (e.date < a ? e.date : a), today);
+  state.entries.forEach(e => { if (isDone(e) && e.date <= today && (!last[e.p] || e.date > last[e.p])) last[e.p] = e.date; });
+  return PS.map(p => {
+    const start = p.id === 'passion' && state.passionFrom > first ? state.passionFrom : first;
+    const from = last[p.id] || start;
+    return { p, never: !last[p.id], last: from, days: daysBetween(from, today) };
+  });
+}
+const neglected = () => gapInfo().filter(x => x.days >= NUDGE_DAYS).sort((a, b) => b.days - a.days);
+function renderNudge() {
+  const el = $('nudge'), today = todayStr();
+  const list = lsGet('fivePs.nudge') === today ? [] : neglected();
+  if (!list.length) { el.hidden = true; return; }
+  const top = list[0], msgs = NUDGE_MSG[top.p.id], msg = msgs[hashStr(today + top.p.id) % msgs.length];
+  const others = list.slice(1).map(x => `${x.p.emoji} ${x.p.name} (${x.days}d)`).join(', ');
+  el.hidden = false;
+  el.innerHTML = `<span>${top.p.emoji} <b>${top.never ? `You haven’t logged any ${top.p.name} yet.` : `${top.p.name} has been quiet for ${top.days} days.`}</b> ${esc(msg)}
+    <i>Try: ${esc(ideaAt(top.p.id))}</i> <button data-nudgeuse="${top.p.id}">Use this idea</button>${others ? `<br><small>Also quiet: ${esc(others)}</small>` : ''}</span>
+    <button data-nudgeclose="1" title="Remind me tomorrow">✕</button>`;
+}
+
 // ---------- daily reminder ----------
 // A static page can't receive server push. The page fires the reminder while it is open in a
 // background tab; installed Chromium apps also get a best-effort wake-up via Periodic Background Sync.
@@ -1348,7 +1395,7 @@ async function syncSw() {
   const today = todayStr(), old = await idbGet().catch(() => null);
   const last = [old && old.last, remind.last].filter(Boolean).sort().pop() || ''; // never forget a reminder the worker already sent
   remind.last = last;
-  await idbPut({ on: remind.on, time: remind.time, last, date: today, done: [...(hitsByDate()[today] || [])] }).catch(() => {});
+  await idbPut({ on: remind.on, time: remind.time, last, date: today, done: [...(hitsByDate()[today] || [])], lastDone: Object.fromEntries(gapInfo().map(x => [x.p.id, x.last])) }).catch(() => {});
 }
 function saveRemind() { lsSet(REMIND_KEY, JSON.stringify(remind)); return syncSw(); }
 
@@ -1362,10 +1409,12 @@ async function maybeRemind() {
   const done = hitsByDate()[today] || new Set();
   if (dayFull(today)) return;
   const left = PS.filter(p => !done.has(p.id)).map(p => `${p.emoji} ${p.name}`);
+  const quiet = neglected()[0];
+  const nudge = quiet ? ` ${quiet.p.emoji} ${quiet.p.name} has been quiet for ${quiet.days} days. Give it a go today!` : '';
   remind.last = today; await saveRemind();
   const reg = await navigator.serviceWorker.ready;
   reg.showNotification('🍊 Squeeze the juice', {
-    body: (done.size ? `${done.size} of ${PS.length} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.'),
+    body: (done.size ? `${done.size} of ${PS.length} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.') + nudge,
     tag: 'daily-reminder', icon: 'icon-192.png', badge: 'favicon-32.png',
   });
 }

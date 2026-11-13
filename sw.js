@@ -59,13 +59,26 @@ function reminderDue(rec, now) {
   const done = rec.date === today ? rec.done : []; // a record from an earlier day means nothing is done today
   return done.length < Object.keys(PS_NAMES).length;
 }
+const parseDay = (str) => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+// the P that has been quiet longest (3+ days), from the last-done dates the page mirrored into IndexedDB
+function neglectLine(rec, now) {
+  const today = parseDay(ymd(now));
+  let worst = null;
+  for (const id of Object.keys(PS_NAMES)) {
+    const last = rec.lastDone && rec.lastDone[id];
+    if (!last) continue;
+    const days = Math.round((today - parseDay(last)) / 864e5);
+    if (days >= 3 && (!worst || days > worst.days)) worst = { id, days };
+  }
+  return worst ? ` ${PS_NAMES[worst.id]} has been quiet for ${worst.days} days. Give it a go today!` : '';
+}
 function reminderText(rec, now) {
   const done = rec.date === ymd(now) ? rec.done : [];
   const total = Object.keys(PS_NAMES).length;
   const left = Object.keys(PS_NAMES).filter(id => !done.includes(id)).map(id => PS_NAMES[id]);
   return {
     title: '🍊 Squeeze the juice',
-    body: (done.length ? `${done.length} of ${total} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.'),
+    body: (done.length ? `${done.length} of ${total} P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. A few quick wins and the day is yours.') + neglectLine(rec, now),
   };
 }
 
@@ -101,4 +114,4 @@ self.addEventListener('notificationclick', (e) => {
     .then((cs) => (cs.length ? cs[0].focus() : self.clients.openWindow('./index.html'))));
 });
 
-if (typeof module !== 'undefined') module.exports = { reminderDue, reminderText, ymd }; // for tests/sw.test.js
+if (typeof module !== 'undefined') module.exports = { reminderDue, reminderText, neglectLine, ymd }; // for tests/sw.test.js

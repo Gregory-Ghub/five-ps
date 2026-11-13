@@ -16,6 +16,7 @@ node run.js backup                     # only files whose name contains "backup"
 |---|---|
 | `passion.test.js` | The 6th P: content, the six-P full-day rule, migrating old data, orchard removed |
 | `todo.test.js` | The to-do list: carry-over, copy-not-move, add all, done today, remove |
+| `nudge.test.js` | Quiet-P banner and notification text, thresholds, snooze |
 | `load.test.js` | Saved data survives load, save and reload |
 | `backup.test.js` | Backup reminder banner, Back up now, snooze, import skipping bad entries, undo import |
 | `install.test.js` | Install button: appears when installable, calls the prompt, hides when installed, iOS instructions |
