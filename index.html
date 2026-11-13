@@ -649,8 +649,7 @@ function renderHistory() {
   document.querySelectorAll('[data-hstatus]').forEach(b => b.classList.toggle('active', b.dataset.hstatus === hist.status));
   document.querySelectorAll('[data-hview]').forEach(b => b.classList.toggle('active', b.dataset.hview === hist.view));
 
-  // customs: show the date pickers and make sure they hold sensible values
-  if (hist.range === 'custom' && !hist.from && !hist.to) { hist.from = fmt(addDays(parse(today), -6)); hist.to = today; }
+  // custom range: show the date pickers
   $('hcustom').hidden = hist.range !== 'custom';
   $('hfrom').value = hist.from; $('hto').value = hist.to;
 
@@ -710,7 +709,7 @@ function renderHistory() {
 
 function downloadCsv() {
   const today = todayStr();
-  const q = v => `"${String(v).replace(/"/g, '""')}"`;
+  const q = v => { let x = String(v); if (/^[=+\-@\t\r]/.test(x)) x = "'" + x; return `"${x.replace(/"/g, '""')}"`; }; // ' stops spreadsheets running it as a formula
   const rows = [['date', 'p', 'task', 'status']].concat(histEntries().slice().reverse().map(e =>
     [e.date, PS.find(p => p.id === e.p).name, e.text, STATUS[statusOf(e, today)].label]));
   const a = document.createElement('a');
@@ -720,7 +719,7 @@ function downloadCsv() {
 
 // ---------- Juice Oracle: a random fact about you, drawn from your own data ----------
 const STOP = new Set('the and for with from that this have your about into then they them what when will would could should just some more very much over also been were their there than like want need get got doing done make made'.split(' '));
-let lastOracle = -1;
+let lastOracle = -1, oracleTimer = null;
 function oracleDeck() {
   const done = state.entries.filter(isDone), today = todayStr(), m = hitsByDate();
   if (!done.length) return ['The orb is cloudy. Log a few wins and come back, and I will have secrets to tell. 🔮'];
@@ -769,7 +768,8 @@ function consultOracle() {
   const orb = $('orb'), out = $('oracleOut');
   orb.classList.remove('think'); void orb.offsetWidth; orb.classList.add('think');
   out.classList.remove('show'); out.textContent = '…';
-  setTimeout(() => { out.textContent = deck[i]; void out.offsetWidth; out.classList.add('show'); }, 700);
+  clearTimeout(oracleTimer);
+  oracleTimer = setTimeout(() => { out.textContent = deck[i]; void out.offsetWidth; out.classList.add('show'); }, 700);
 }
 // ---------- Weekly review: reflect, then set one concrete intention for the week ----------
 const weekStartOf = ds => fmt(addDays(parse(ds), -parse(ds).getDay()));
@@ -792,7 +792,7 @@ function renderReview() {
   const level = st.pct === null ? '' : st.pct >= 90 ? 'Fresh squeezed 🍊' : st.pct >= 70 ? 'Rich juice' : st.pct >= 50 ? 'Half pressed' : st.pct >= 25 ? 'A few good drops' : 'Just getting started';
   const missed = state.entries.filter(e => e.date >= ws && e.date <= we && e.date < today && !isDone(e)).length;
   const weakest = [...PS].sort((a, b) => st.byP[a.id] - st.byP[b.id])[0];
-  const delta = st.pct !== null && prev.elapsed ? st.pct - prev.pct : null;
+  const delta = st.pct !== null && prev.elapsed && prev.slots > 0 ? st.pct - prev.pct : null;
 
   const bars = PS.map(p => `<div class="rvrow" style="--c:${p.color}"><span class="lab">${p.emoji} ${p.name}</span>
       <span class="bar"><i style="width:${st.byP[p.id] / 7 * 100}%"></i></span><span>${st.byP[p.id]}/7</span></div>`).join('');
@@ -909,7 +909,7 @@ function render() {
     return `<div class="pcard ${doneN ? 'done' : ''}" style="--c:${p.color}">
       <h3><span>${p.emoji} ${p.name}${planN ? `<small>${planN} planned</small>` : ''}</span><span>${doneN ? '✓' : ''}</span></h3>
       <div class="blurb">${p.blurb}</div>
-      <form data-p="${p.id}"><input data-p="${p.id}" placeholder="${ph}" maxlength="140" value="${(typed[p.id] || '').replace(/"/g, '&quot;')}"><button>${mode === 'plan' ? 'Plan' : 'Add'}</button></form>
+      <form data-p="${p.id}"><input data-p="${p.id}" placeholder="${ph}" maxlength="140" value="${esc(typed[p.id] || '')}"><button>${mode === 'plan' ? 'Plan' : 'Add'}</button></form>
       <ul class="entries">${list.map(e => {
         const dn = isDone(e);
         return `<li class="${dn ? 'isdone' : 'planned'} ${future ? 'future' : ''}" data-toggle="${e.id}" title="${future ? '' : dn ? 'Tap to mark as not done' : 'Tap to mark done'}">
@@ -1171,14 +1171,22 @@ document.addEventListener('submit', ev => {
 });
 document.addEventListener('click', ev => {
   const t = ev.target;
-  if (t.dataset.del) { state.entries = state.entries.filter(e => e.id !== t.dataset.del); save(); render(); return; }
+  if (t.dataset.del) {
+    const gone = state.entries.find(e => e.id === t.dataset.del);
+    if (gone && gone.wild && state.wild[gone.date]) state.wild[gone.date].done = false; // let the card be played again
+    state.entries = state.entries.filter(e => e.id !== t.dataset.del); save(); render(); return;
+  }
   if (t.dataset.idea) { const id = t.dataset.idea; ideaIdx[id] = ((ideaIdx[id] ?? 0) + 1) % IDEAS[id].length; render(); return; }
   if (t.dataset.use) {
     const id = t.dataset.use, input = document.querySelector(`.pcard input[data-p="${id}"]`);
     input.value = IDEAS[id][ideaIdx[id] ?? 0]; input.focus(); return;
   }
   if (t.dataset.tab) { setTab(t.dataset.tab); return; }
-  if (t.dataset.hrange) { hist.range = t.dataset.hrange; render(); return; }
+  if (t.dataset.hrange) {
+    hist.range = t.dataset.hrange;
+    if (hist.range === 'custom' && !hist.from && !hist.to) { hist.from = fmt(addDays(parse(todayStr()), -6)); hist.to = todayStr(); }
+    render(); return;
+  }
   if (t.dataset.hstatus) { hist.status = t.dataset.hstatus; render(); return; }
   if (t.dataset.hview) { hist.view = t.dataset.hview; render(); return; }
   if (t.dataset.bannerclose) { try { localStorage.setItem('fivePs.banner', todayStr()); } catch (e) {} $('banner').hidden = true; return; }
