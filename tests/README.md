@@ -18,3 +18,6 @@ node run.js backup                     # only files whose name contains "backup"
 | `backup.test.js` | Backup reminder banner, Back up now, snooze, import skipping bad entries, undo import |
 | `install.test.js` | Install button: appears when installable, calls the prompt, hides when installed, iOS instructions |
 | `wild.test.js` | Wild Card reveal/play/delete, including dates that used to crash |
+| `reminder.test.js` | Daily reminder in the page: permission flow, timing, once-a-day, skips when done / visible / off |
+| `sw.test.js` | The service worker's reminder decisions (pure logic, no browser) |
+| `periodic.test.js` | A real `periodicsync` event delivered to the real service worker |

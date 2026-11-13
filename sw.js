@@ -1,5 +1,5 @@
 // Bump CACHE when you want to force-refresh the precached files.
-const CACHE = 'five-ps-v6';
+const CACHE = 'five-ps-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -44,3 +44,60 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
+
+// ---------- daily reminder (Periodic Background Sync, best effort) ----------
+// The page mirrors settings + today's progress into IndexedDB because the worker can't read localStorage.
+const PS_NAMES = { payday: '💰 Payday', play: '🎮 Play', pain: '🔥 Pain', partnership: '🤝 Partnership', physical: '💪 Physical' };
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+function reminderDue(rec, now) {
+  if (!rec || !rec.on) return false;
+  const today = ymd(now);
+  if (rec.last === today) return false;
+  const [h, m] = String(rec.time || '20:00').split(':').map(Number);
+  if (now.getHours() * 60 + now.getMinutes() < h * 60 + m) return false;
+  const done = rec.date === today ? rec.done : []; // a record from an earlier day means nothing is done today
+  return done.length < 5;
+}
+function reminderText(rec, now) {
+  const done = rec.date === ymd(now) ? rec.done : [];
+  const left = Object.keys(PS_NAMES).filter(id => !done.includes(id)).map(id => PS_NAMES[id]);
+  return {
+    title: '🍊 Squeeze the juice',
+    body: done.length ? `${done.length} of 5 P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. Five quick wins and the day is yours.',
+  };
+}
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('fivePs-sw', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function idbGet() {
+  const db = await idbOpen();
+  return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get('reminder'); q.onsuccess = () => { db.close(); res(q.result || null); }; q.onerror = () => rej(q.error); });
+}
+async function idbPut(val) {
+  const db = await idbOpen();
+  return new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(val, 'reminder'); tx.oncomplete = () => { db.close(); res(); }; tx.onerror = () => rej(tx.error); });
+}
+
+async function checkReminder() {
+  const rec = await idbGet(), now = new Date();
+  if (!reminderDue(rec, now)) return;
+  const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  if (clients.some(c => c.visibilityState === 'visible')) return; // they're looking at the app
+  await idbPut({ ...rec, last: ymd(now) });
+  const t = reminderText(rec, now);
+  await self.registration.showNotification(t.title, { body: t.body, tag: 'daily-reminder', icon: 'icon-192.png', badge: 'favicon-32.png' });
+}
+self.addEventListener('periodicsync', (e) => { if (e.tag === 'daily-reminder') e.waitUntil(checkReminder()); });
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+    .then((cs) => (cs.length ? cs[0].focus() : self.clients.openWindow('./index.html'))));
+});
+
+if (typeof module !== 'undefined') module.exports = { reminderDue, reminderText, ymd }; // for tests/sw.test.js

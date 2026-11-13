@@ -122,7 +122,7 @@
   .banner { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-top: 14px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(120deg, #1d2b4a, #231d2b); animation: fadeup .6s ease both; }
   .banner.warn { background: linear-gradient(120deg, #4a2f1d, #231d2b); }
   .banner button { background: none; border: none; color: var(--muted); padding: 0 4px; }
-  input[type=date], textarea.rvtext { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; color-scheme: dark; }
+  input[type=date], input[type=time], textarea.rvtext { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; color-scheme: dark; }
   textarea.rvtext { width: 100%; min-height: 64px; resize: vertical; }
   .rvrow { display: flex; align-items: center; gap: 10px; margin: 5px 0; font-size: .9rem; }
   .rvrow .lab { width: 110px; flex: none; }
@@ -307,6 +307,8 @@
     <input type="file" id="file" accept="application/json" hidden>
     <button id="undoImport" hidden>↩ Undo last import</button>
     <button id="install" hidden>📲 Install app</button>
+    <button id="remind">🔔 Daily reminder: off</button>
+    <input type="time" id="remindTime" value="20:00" hidden aria-label="Reminder time">
     <span class="tag" id="backupInfo"></span>
   </footer>
 </div>
@@ -367,7 +369,7 @@ function load() {
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) return sanitize(s); } catch (e) { console.error('5 P\'s: could not load saved data', e); }
   return { entries: [], wild: {}, reviews: {} };
 }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} try { syncSw(); } catch (e) {} }
 
 // date -> Set of P ids that are DONE (planned items don't count)
 function hitsByDate() {
@@ -1324,6 +1326,87 @@ document.addEventListener('toggle', ev => {
   folds[d.id] = d.open;
   try { localStorage.setItem('fivePs.folds', JSON.stringify(folds)); } catch (e) {}
 }, true);
+
+// ---------- daily reminder ----------
+// A static page can't receive server push. The page fires the reminder while it is open in a
+// background tab; installed Chromium apps also get a best-effort wake-up via Periodic Background Sync.
+// The service worker can't read localStorage, so settings + today's progress are mirrored to IndexedDB.
+const REMIND_KEY = 'fivePs.reminder';
+let remind = { on: false, time: '20:00', last: '' };
+try { Object.assign(remind, JSON.parse(localStorage.getItem(REMIND_KEY)) || {}); } catch (e) {}
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('fivePs-sw', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function idbGet() {
+  const db = await idbOpen();
+  return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get('reminder'); q.onsuccess = () => { db.close(); res(q.result || null); }; q.onerror = () => rej(q.error); });
+}
+async function idbPut(val) {
+  const db = await idbOpen();
+  return new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(val, 'reminder'); tx.oncomplete = () => { db.close(); res(); }; tx.onerror = () => rej(tx.error); });
+}
+async function syncSw() {
+  if (!window.indexedDB) return;
+  const today = todayStr(), old = await idbGet().catch(() => null);
+  const last = [old && old.last, remind.last].filter(Boolean).sort().pop() || ''; // never forget a reminder the worker already sent
+  remind.last = last;
+  await idbPut({ on: remind.on, time: remind.time, last, date: today, done: [...(hitsByDate()[today] || [])] }).catch(() => {});
+}
+function saveRemind() { lsSet(REMIND_KEY, JSON.stringify(remind)); return syncSw(); }
+
+async function maybeRemind() {
+  if (!remind.on || !('Notification' in window) || Notification.permission !== 'granted' || !navigator.serviceWorker) return;
+  if (!document.hidden) return; // you're already looking at the app
+  const today = todayStr(), now = new Date(), [h, m] = String(remind.time).split(':').map(Number);
+  if (now.getHours() * 60 + now.getMinutes() < h * 60 + m) return;
+  const rec = await idbGet().catch(() => null);
+  if (remind.last === today || (rec && rec.last === today)) return;
+  const done = hitsByDate()[today] || new Set();
+  if (done.size === 5) return;
+  const left = PS.filter(p => !done.has(p.id)).map(p => `${p.emoji} ${p.name}`);
+  remind.last = today; await saveRemind();
+  const reg = await navigator.serviceWorker.ready;
+  reg.showNotification('🍊 Squeeze the juice', {
+    body: done.size ? `${done.size} of 5 P’s done. Still to go: ${left.join(', ')}.` : 'Nothing squeezed yet today. Five quick wins and the day is yours.',
+    tag: 'daily-reminder', icon: 'icon-192.png', badge: 'favicon-32.png',
+  });
+}
+async function setPeriodic(on) {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (!('periodicSync' in reg)) return;
+    if (on) await reg.periodicSync.register('daily-reminder', { minInterval: 60 * 60 * 1000 });
+    else await reg.periodicSync.unregister('daily-reminder');
+  } catch (e) {} // not installed / not permitted: the open-tab reminder still works
+}
+function updateRemindUi() {
+  const blocked = remind.on && 'Notification' in window && Notification.permission !== 'granted';
+  $('remind').textContent = !remind.on ? '🔔 Daily reminder: off' : blocked ? '🔕 Reminder blocked' : '🔔 Daily reminder: on';
+  $('remindTime').hidden = !remind.on; $('remindTime').value = remind.time;
+}
+$('remind').onclick = async () => {
+  if (remind.on) { remind.on = false; }
+  else {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      alert('This browser can’t show notifications. On iPhone, install the app first (Share → Add to Home Screen), then try again.'); return;
+    }
+    let perm = Notification.permission;
+    if (perm === 'default') perm = await Notification.requestPermission();
+    if (perm !== 'granted') { alert('Notifications are blocked. Allow them for this site in your browser settings, then try again.'); updateRemindUi(); return; }
+    remind.on = true;
+  }
+  await saveRemind(); await setPeriodic(remind.on); updateRemindUi();
+};
+$('remindTime').onchange = e => { if (/^\d{2}:\d{2}$/.test(e.target.value)) { remind.time = e.target.value; remind.last = ''; saveRemind(); } };
+setInterval(maybeRemind, 30000);
+document.addEventListener('visibilitychange', () => { if (document.hidden) maybeRemind(); });
+updateRemindUi();
+if (remind.on) { syncSw(); setPeriodic(true); }
 
 // ---------- install app: Chromium offers a real prompt; iOS Safari needs manual steps ----------
 let installEvt = null;

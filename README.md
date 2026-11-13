@@ -37,6 +37,16 @@ It's a single static page with no build step, no dependencies and no account. It
 **App behavior**
 - Installable (PWA) with an **Install app** button. On iPhone it shows the Share → Add to Home Screen steps.
 - Works offline through a service worker.
+- **Daily reminder:** tap **🔔 Daily reminder** in the footer, allow notifications and pick a time (default 20:00). If you haven't squeezed all five P's by then, you get a nudge listing what's left. It never fires while you're looking at the app, at most once a day, and not at all if you're done. See [Reminder limits](#reminder-limits).
+
+## Reminder limits
+
+This is a static site with no server, so it **cannot send true push notifications** to a closed app. Two best-effort paths cover most cases:
+
+- **App open in a background tab or window:** the page checks every 30 seconds and fires at your reminder time.
+- **App installed, on Chrome or Edge (Android and desktop):** the service worker asks for Periodic Background Sync wake-ups. The *browser* decides when they run (often every several hours, and only for apps you use regularly), so the reminder can be late or skipped.
+
+Safari and Firefox don't support background wake-ups, and iPhone only allows notifications from an installed app (Share → Add to Home Screen). If you need a guaranteed reminder, also set an alarm on your phone.
 
 ## Run it locally
 
@@ -63,11 +73,11 @@ tests/                browser tests (see tests/README.md)
 
 ## Updating the app
 
-The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v6` → `five-ps-v7`) in the same commit.
+The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v7` → `five-ps-v7`) in the same commit.
 
 ## Tests
 
-End-to-end tests drive the real app in headless Chromium (about 10 seconds, 64 checks):
+End-to-end tests drive the real app in headless Chromium (about 15 seconds, 98 checks):
 
 ```
 cd tests
@@ -76,7 +86,7 @@ npx playwright-core install chromium   # once
 npm test
 ```
 
-They cover saved data surviving a load, the backup reminder and undo-import flow, the Wild Card, and the install button. See [`tests/README.md`](tests/README.md).
+They cover saved data surviving a load, the backup reminder and undo-import flow, the Wild Card, the install button, and the daily reminder (including a real service-worker wake-up). See [`tests/README.md`](tests/README.md).
 
 ## Data and privacy
 
