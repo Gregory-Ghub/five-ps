@@ -1,5 +1,5 @@
 // Bump CACHE when you want to force-refresh the precached files.
-const CACHE = 'five-ps-v5';
+const CACHE = 'five-ps-v6';
 const ASSETS = [
   './',
   './index.html',

@@ -16,4 +16,5 @@ node run.js backup                     # only files whose name contains "backup"
 |---|---|
 | `load.test.js` | Saved data survives load, save and reload |
 | `backup.test.js` | Backup reminder banner, Back up now, snooze, import skipping bad entries, undo import |
+| `install.test.js` | Install button: appears when installable, calls the prompt, hides when installed, iOS instructions |
 | `wild.test.js` | Wild Card reveal/play/delete, including dates that used to crash |

@@ -306,6 +306,7 @@
     <button id="import">⬆ Import backup</button>
     <input type="file" id="file" accept="application/json" hidden>
     <button id="undoImport" hidden>↩ Undo last import</button>
+    <button id="install" hidden>📲 Install app</button>
     <span class="tag" id="backupInfo"></span>
   </footer>
 </div>
@@ -1323,6 +1324,22 @@ document.addEventListener('toggle', ev => {
   folds[d.id] = d.open;
   try { localStorage.setItem('fivePs.folds', JSON.stringify(folds)); } catch (e) {}
 }, true);
+
+// ---------- install app: Chromium offers a real prompt; iOS Safari needs manual steps ----------
+let installEvt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function updateInstall() { $('install').hidden = isStandalone() || !(installEvt || isIos()); }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; updateInstall(); });
+window.addEventListener('appinstalled', () => { installEvt = null; updateInstall(); });
+$('install').onclick = async () => {
+  if (!installEvt) { alert('To install: tap the Share button, then choose "Add to Home Screen".'); return; }
+  const e = installEvt; installEvt = null; // a prompt can only be used once
+  e.prompt();
+  try { await e.userChoice; } catch (err) {}
+  updateInstall();
+};
+updateInstall();
 
 setSound(soundOn);
 render();
