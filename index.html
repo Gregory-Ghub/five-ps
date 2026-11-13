@@ -13,6 +13,7 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
+  [hidden] { display: none !important; } /* class display rules (.banner, flex rows) must not override the hidden attribute */
   :root {
     --bg: #17131c; --card: #231d2b; --card2: #2c2536; --text: #f6f1ea; --muted: #a79fb3;
     --line: #3a3244; --empty: #3a3340;
@@ -357,12 +358,12 @@ function validEntry(e) {
     && typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && !isNaN(parse(e.date))
     && PS.some(p => p.id === e.p);
 }
-const plainObj = o => (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+function plainObj(o) { return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; }
 function sanitize(s) {
   return { entries: s.entries.filter(validEntry), wild: plainObj(s.wild), reviews: plainObj(s.reviews) };
 }
 function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) return sanitize(s); } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.entries)) return sanitize(s); } catch (e) { console.error('5 P\'s: could not load saved data', e); }
   return { entries: [], wild: {}, reviews: {} };
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
