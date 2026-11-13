@@ -73,7 +73,7 @@ tests/                browser tests (see tests/README.md)
 
 ## Updating the app
 
-The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v7` → `five-ps-v7`) in the same commit.
+The service worker serves cached files first and refreshes them in the background, so an update normally appears on the load *after* you deploy it. To push a change out faster, bump `CACHE` in `sw.js` (for example `five-ps-v7` → `five-ps-v8`) in the same commit.
 
 ## Tests
 
